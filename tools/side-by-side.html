@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Projekt i aplikacja</title>
+<style>
+  body { margin: 0; padding: 24px; background: #EFE9E4; font-family: system-ui, sans-serif; color: #221C19; }
+  h2 { font-size: 18px; margin: 32px 0 8px; }
+  .pair { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; }
+  figure { margin: 0; }
+  figcaption { font-size: 13px; color: #6E655F; margin-bottom: 4px; }
+  img { display: block; max-width: 100%; box-shadow: 0 1px 4px rgba(0,0,0,.15); background: #fff; }
+</style>
+</head>
+<body>
+<h1>Projekt (lewa) i aplikacja (prawa)</h1>
+<p>Otwórz z katalogu repozytorium: <code>open tools/side-by-side.html</code>. Obrazy robi <code>make e2e</code>.</p>
+<div id="list"></div>
+<script>
+  const names = ['Main', 'Kod', 'Salon', 'Uslugi', 'Zespol', 'Godziny', 'Gotowe', 'Kalendarz', 'NowaWizyta', 'Czekaja', 'Ustawienia', 'Admin'];
+  const extra = ['Tydzien', 'Kalendarz-390', 'Kalendarz-1440', 'Login', 'Login-kod', 'Stylistka', 'Ustawienia-link', 'Ustawienia-zespol'];
+  const only = new URLSearchParams(location.search).get('only');
+  const list = document.getElementById('list');
+  for (const n of names) {
+    if (only && only !== n) continue;
+    list.insertAdjacentHTML('beforeend', `<h2>${n}</h2><div class="pair"><figure><figcaption>projekt</figcaption><img src="../docs/screens/design/${n}.png"></figure><figure><figcaption>aplikacja</figcaption><img src="../docs/screens/${n}.png"></figure></div>`);
+  }
+  if (!only) for (const n of extra) list.insertAdjacentHTML('beforeend', `<h2>${n} (bez projektu)</h2><img src="../docs/screens/${n}.png">`);
+</script>
+</body>
+</html>

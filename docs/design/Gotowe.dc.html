@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Sprawdzamy salon</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#8A3A5A}a:hover{color:#6E2A46}
+button{font:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FAF7F4; color: #221C19; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; padding: 96px 24px 32px;">
+  <span style="width: 72px; height: 72px; border-radius: 36px; background: #F3E4EA; display: flex; align-items: center; justify-content: center;">
+    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+  </span>
+  <h1 style="margin: 24px 0 8px; font-size: 32px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; text-align: center;">Sprawdzamy salon</h1>
+  <p style="margin: 0; font-size: 17px; color: #6E655F; text-align: center;">Dostaniesz SMS, zwykle tego samego dnia.</p>
+
+  <div style="margin-top: 32px; width: 100%; box-sizing: border-box; border: 1.5px solid #E0D8D1; border-radius: 18px; background: #FFFFFF; overflow: hidden;">
+    <div style="height: 60px; display: flex; align-items: center; gap: 12px; padding: 0 16px; border-bottom: 1px solid #F0EAE5;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2E7D4F" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>
+      <span style="flex-grow: 1; font-size: 16px; font-weight: 600;">Kalendarz</span>
+      <span style="font-size: 15px; color: #2E7D4F; font-weight: 600;">działa</span>
+    </div>
+    <div style="height: 60px; display: flex; align-items: center; gap: 12px; padding: 0 16px;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#6E655F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+      <span style="flex-grow: 1; font-size: 16px; font-weight: 600;">Zapisy online</span>
+      <span style="font-size: 15px; color: #6E655F; font-weight: 600;">po akceptacji</span>
+    </div>
+  </div>
+
+  <div style="flex-grow: 1;"></div>
+
+  <a href="Kalendarz.dc.html" style="width: 100%; height: 56px; border-radius: 14px; background: {{accent}}; color: #FFFFFF; font-size: 18px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none;">Otwórz kalendarz</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#8A3A5A","options":["#8A3A5A","#2F5D62","#3B4A8C","#9A5B2E"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#8A3A5A' };
+  }
+}
+</script>
+</body>
+</html>

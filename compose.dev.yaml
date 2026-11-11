@@ -1,0 +1,21 @@
+# Lokalny Postgres do pracy i testów (make db). Projekt: beauty-local (zawsze `docker compose -p beauty-local -f compose.dev.yaml`).
+name: beauty-local
+services:
+  db:
+    image: postgres:16.15-alpine
+    environment:
+      POSTGRES_USER: beauty
+      POSTGRES_PASSWORD: beauty
+      POSTGRES_DB: beauty
+      TZ: UTC
+    ports:
+      - '127.0.0.1:55440:5432'
+    volumes:
+      - beauty-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U beauty -d beauty']
+      interval: 1s
+      timeout: 3s
+      retries: 30
+volumes:
+  beauty-db:

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kod SMS</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#8A3A5A}a:hover{color:#6E2A46}
+input{font:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FAF7F4; color: #221C19; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; flex-direction: column; padding: 24px 24px 32px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; height: 44px;">
+    <a href="Main.dc.html" aria-label="Wstecz" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#221C19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+    </a>
+    <span style="font-size: 14px; color: #6E655F;">2 z 6</span>
+  </div>
+  <div style="height: 4px; border-radius: 2px; background: #EAE3DD; margin-top: 12px;"><div style="width: 33%; height: 4px; border-radius: 2px; background: {{accent}};"></div></div>
+
+  <h1 style="margin: 40px 0 8px; font-size: 32px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em;">Wpisz kod z SMS</h1>
+  <p style="margin: 0; font-size: 17px; color: #6E655F;">Wysłaliśmy go na 600 123 456</p>
+
+  <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-top: 36px;">
+    <input aria-label="Cyfra 1" value="4" style="height: 64px; box-sizing: border-box; text-align: center; border: 1.5px solid #E0D8D1; border-radius: 14px; background: #FFFFFF; font-size: 26px; font-weight: 600; color: #221C19; outline: none;">
+    <input aria-label="Cyfra 2" value="8" style="height: 64px; box-sizing: border-box; text-align: center; border: 1.5px solid #E0D8D1; border-radius: 14px; background: #FFFFFF; font-size: 26px; font-weight: 600; color: #221C19; outline: none;">
+    <input aria-label="Cyfra 3" value="1" style="height: 64px; box-sizing: border-box; text-align: center; border: 1.5px solid #E0D8D1; border-radius: 14px; background: #FFFFFF; font-size: 26px; font-weight: 600; color: #221C19; outline: none;">
+    <input aria-label="Cyfra 4" value="" style="height: 64px; box-sizing: border-box; text-align: center; border: 2px solid {{accent}}; border-radius: 14px; background: #FFFFFF; font-size: 26px; font-weight: 600; color: #221C19; outline: none;">
+    <input aria-label="Cyfra 5" value="" style="height: 64px; box-sizing: border-box; text-align: center; border: 1.5px solid #E0D8D1; border-radius: 14px; background: #FFFFFF; font-size: 26px; font-weight: 600; color: #221C19; outline: none;">
+    <input aria-label="Cyfra 6" value="" style="height: 64px; box-sizing: border-box; text-align: center; border: 1.5px solid #E0D8D1; border-radius: 14px; background: #FFFFFF; font-size: 26px; font-weight: 600; color: #221C19; outline: none;">
+  </div>
+  <p style="margin: 20px 0 0; font-size: 15px; color: #6E655F;">Nie doszedł? Wyślij ponownie za 0:42</p>
+
+  <div style="flex-grow: 1;"></div>
+
+  <a href="Salon.dc.html" style="height: 56px; border-radius: 14px; background: {{accent}}; color: #FFFFFF; font-size: 18px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none;">Dalej</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#8A3A5A","options":["#8A3A5A","#2F5D62","#3B4A8C","#9A5B2E"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#8A3A5A' };
+  }
+}
+</script>
+</body>
+</html>

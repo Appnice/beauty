@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Załóż salon</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#8A3A5A}a:hover{color:#6E2A46}
+input{font:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FAF7F4; color: #221C19; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; flex-direction: column; padding: 24px 24px 32px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; height: 44px;">
+    <div style="display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 17px;">
+      <span style="width: 28px; height: 28px; border-radius: 8px; background: {{accent}}; display: inline-flex; align-items: center; justify-content: center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg>
+      </span>
+      beauty
+    </div>
+    <span style="font-size: 14px; color: #6E655F;">1 z 6</span>
+  </div>
+  <div style="height: 4px; border-radius: 2px; background: #EAE3DD; margin-top: 12px;"><div style="width: 17%; height: 4px; border-radius: 2px; background: {{accent}};"></div></div>
+
+  <h1 style="margin: 40px 0 8px; font-size: 32px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em;">Załóż salon</h1>
+  <p style="margin: 0; font-size: 17px; color: #6E655F;">Za darmo. 3 minuty.</p>
+
+  <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 36px;">
+    <label style="display: flex; flex-direction: column; gap: 8px; font-size: 15px; font-weight: 600;">Nazwa salonu
+      <input value="Studio Ola" style="height: 56px; box-sizing: border-box; padding: 0 16px; border: 1.5px solid {{accent}}; border-radius: 14px; background: #FFFFFF; font-size: 18px; color: #221C19; outline: none;">
+    </label>
+    <div style="display: flex; align-items: center; gap: 6px; margin-top: -10px; font-size: 14px; color: #6E655F;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6E655F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"></path><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"></path></svg>
+      beauty.appnice.dev/<b style="color: #221C19; font-weight: 600;">studio-ola</b>
+    </div>
+    <label style="display: flex; flex-direction: column; gap: 8px; font-size: 15px; font-weight: 600;">Twój telefon
+      <div style="display: flex; height: 56px; box-sizing: border-box; border: 1.5px solid #E0D8D1; border-radius: 14px; background: #FFFFFF; overflow: hidden;">
+        <span style="display: flex; align-items: center; padding: 0 14px; font-size: 18px; color: #6E655F; border-right: 1.5px solid #EAE3DD;">+48</span>
+        <input value="600 123 456" inputmode="tel" style="flex-grow: 1; min-width: 0; border: 0; padding: 0 14px; font-size: 18px; color: #221C19; outline: none; background: transparent;">
+      </div>
+    </label>
+    <label style="display: flex; flex-direction: column; gap: 8px; font-size: 15px; font-weight: 600;">Hasło
+      <input type="password" value="haslo1234" style="height: 56px; box-sizing: border-box; padding: 0 16px; border: 1.5px solid #E0D8D1; border-radius: 14px; background: #FFFFFF; font-size: 18px; color: #221C19; outline: none;">
+    </label>
+  </div>
+
+  <div style="flex-grow: 1;"></div>
+
+  <a href="Kod.dc.html" style="height: 56px; border-radius: 14px; background: {{accent}}; color: #FFFFFF; font-size: 18px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none;">Dalej</a>
+  <p style="margin: 20px 0 0; text-align: center; font-size: 15px; color: #6E655F;">Masz już salon? <a href="Kalendarz.dc.html" style="font-weight: 600;">Zaloguj się</a></p>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#8A3A5A","options":["#8A3A5A","#2F5D62","#3B4A8C","#9A5B2E"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accent ?? '#8A3A5A' };
+  }
+}
+</script>
+</body>
+</html>

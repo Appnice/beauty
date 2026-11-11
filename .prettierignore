@@ -1,0 +1,12 @@
+.svelte-kit
+*.md
+build
+docs/design
+docs/screens
+kb
+migrations
+node_modules
+package-lock.json
+playwright-report
+test-results
+tools

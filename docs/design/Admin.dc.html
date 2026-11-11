@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Nowe salony</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#8A3A5A}a:hover{color:#6E2A46}
+button{font:inherit}
+</style>
+</helmet>
+<div style="width: 1280px; height: 820px; box-sizing: border-box; background: #FAF7F4; color: #221C19; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; padding: 32px 48px;">
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <h1 style="margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.01em;">Nowe salony <span style="color: #6E655F; font-weight: 600;">3</span></h1>
+    <div style="flex-grow: 1;"></div>
+    <div role="group" aria-label="Filtr" style="height: 44px; display: flex; padding: 3px; box-sizing: border-box; border-radius: 12px; background: #EFE9E4;">
+      <button style="height: 38px; padding: 0 16px; border: 0; border-radius: 9px; background: #FFFFFF; color: #221C19; font-size: 15px; font-weight: 600; box-shadow: 0 1px 2px rgba(34,28,25,0.12); cursor: pointer;">Czekają</button>
+      <button style="height: 38px; padding: 0 16px; border: 0; border-radius: 9px; background: transparent; color: #6E655F; font-size: 15px; font-weight: 600; cursor: pointer;">Przyjęte · 12</button>
+      <button style="height: 38px; padding: 0 16px; border: 0; border-radius: 9px; background: transparent; color: #6E655F; font-size: 15px; font-weight: 600; cursor: pointer;">Odrzucone · 4</button>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 24px;">
+    <sc-for list="{{salons}}" as="s" hint-placeholder-count="3">
+      <div style="display: flex; align-items: center; gap: 24px; padding: 20px 20px 20px 24px; border: 1.5px solid #E0D8D1; border-radius: 18px; background: #FFFFFF;">
+        <div style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px;">
+          <div style="display: flex; align-items: baseline; gap: 10px;">
+            <span style="font-size: 20px; font-weight: 700;">{{s.name}}</span>
+            <span style="font-size: 15px; color: #6E655F;">{{s.city}} · {{s.street}}</span>
+          </div>
+          <span style="font-size: 15px;">{{s.about}}</span>
+          <div style="display: flex; gap: 16px; font-size: 14px; color: #6E655F;">
+            <span>{{s.people}} os.</span>
+            <span>{{s.phone}}</span>
+            <a href="{{s.href}}" style="font-weight: 600;">{{s.link}}</a>
+            <span>{{s.when}}</span>
+          </div>
+        </div>
+        <button style="height: 52px; padding: 0 20px; border: 1.5px solid #E0D8D1; border-radius: 14px; background: #FFFFFF; color: #221C19; font-size: 16px; font-weight: 600; cursor: pointer;">Odrzuć</button>
+        <button style="height: 52px; padding: 0 22px; border: 0; border-radius: 14px; background: {{accent}}; color: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"></path></svg>
+          Akceptuj
+        </button>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#8A3A5A","options":["#8A3A5A","#2F5D62","#3B4A8C","#9A5B2E"]},"$preview":{"width":1280,"height":820}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      accent: this.props.accent ?? '#8A3A5A',
+      salons: [
+        { name: 'Studio Ola', city: 'Legnica', street: 'Chojnowska 12', about: 'Fryzjer damski i męski, koloryzacja, paznokcie.', people: '2–3', phone: '600 123 456', link: 'instagram.com/studio.ola', href: 'https://instagram.com/studio.ola', when: 'dziś 18:42' },
+        { name: 'Barber Rynek', city: 'Legnica', street: 'Rynek 7', about: 'Strzyżenie męskie i broda.', people: '1', phone: '512 900 211', link: 'facebook.com/barberrynek', href: 'https://facebook.com/barberrynek', when: 'dziś 16:05' },
+        { name: 'Nails by Kasia', city: 'Chojnów', street: 'Legnicka 3', about: 'Manicure hybrydowy, pedicure.', people: '1', phone: '698 441 020', link: 'nailsbykasia.pl', href: 'https://nailsbykasia.pl', when: 'wczoraj 21:17' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

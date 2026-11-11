@@ -1,0 +1,79 @@
+# Hosted instance (https://beauty.appnice.dev): compose project `beauty` in /opt/beauty on the VPS.
+# tools/deploy.sh ships this file + the image; /opt/beauty/.env (from the Keychain) fills the ${VARS}.
+# The app listens on 127.0.0.1 only; the shared Caddy proxies to it. Postgres has no published port.
+# tools/deploy-local.sh runs the same file on the Mac as project beauty-deploy-local (APP_PORT=8152).
+services:
+  app:
+    image: beauty-app:${BEAUTY_TAG:-latest}
+    restart: unless-stopped
+    mem_limit: 256m
+    ports:
+      - '127.0.0.1:${APP_PORT:-8150}:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      NODE_OPTIONS: --max-old-space-size=160
+      PORT: '3000'
+      DATABASE_URL: postgres://beauty:${BEAUTY_DB_PASSWORD:?set BEAUTY_DB_PASSWORD}@db:5432/beauty
+      APP_SECRET: ${APP_SECRET:?set APP_SECRET}
+      PUBLIC_URL: ${PUBLIC_URL:?set PUBLIC_URL}
+      # adapter-node behind the proxy: origin, protocol and the client IP (last X-Forwarded-For hop = Caddy's view)
+      ORIGIN: ${PUBLIC_URL}
+      PROTOCOL_HEADER: x-forwarded-proto
+      ADDRESS_HEADER: ${ADDRESS_HEADER:-X-Forwarded-For}
+      XFF_DEPTH: '1'
+      SMS_PROVIDER: ${SMS_PROVIDER:-log}
+      SMSAPI_TOKEN: ${SMSAPI_TOKEN:-}
+      SMSAPI_SENDER: ${SMSAPI_SENDER:-}
+      SMS_ECHO: ${SMS_ECHO:-off}
+      SMS_MONTHLY_LIMIT: ${SMS_MONTHLY_LIMIT:-300}
+      SIGNUP_CODE: ${SIGNUP_CODE:-}
+      SINGLE_SALON: 'off'
+      SEED_DEMO: ${SEED_DEMO:-on}
+      DEMO_MANAGER_PASSWORD: ${DEMO_MANAGER_PASSWORD:-demo1234}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_PHONE: ${ADMIN_PHONE:-}
+      ADMIN_NOTIFY_URL: ${ADMIN_NOTIFY_URL:-}
+      OPERATOR_NAME: ${OPERATOR_NAME:-operator tego serwera}
+      JOBS: 'on'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"
+        ]
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    logging:
+      driver: json-file
+      options: { max-size: 10m, max-file: '3' }
+
+  db:
+    image: postgres:16.15-alpine
+    restart: unless-stopped
+    mem_limit: 256m
+    environment:
+      POSTGRES_USER: beauty
+      POSTGRES_PASSWORD: ${BEAUTY_DB_PASSWORD:?set BEAUTY_DB_PASSWORD}
+      POSTGRES_DB: beauty
+      TZ: UTC
+    command: ['postgres', '-c', 'shared_buffers=32MB', '-c', 'max_connections=40']
+    volumes:
+      - beauty-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U beauty -d beauty']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    logging:
+      driver: json-file
+      options: { max-size: 10m, max-file: '3' }
+
+volumes:
+  beauty-db:

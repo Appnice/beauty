@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Kalendarz</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#8A3A5A}a:hover{color:#6E2A46}
+button{font:inherit}
+</style>
+</helmet>
+<div style="width: 1024px; height: 768px; box-sizing: border-box; background: #FAF7F4; color: #221C19; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex;">
+
+  <nav aria-label="Menu" style="width: 88px; flex-shrink: 0; background: #FFFFFF; border-right: 1px solid #EAE3DD; display: flex; flex-direction: column; align-items: center; padding: 16px 0; gap: 6px;">
+    <span style="width: 40px; height: 40px; border-radius: 12px; background: {{accent}}; display: flex; align-items: center; justify-content: center; margin-bottom: 18px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg>
+    </span>
+    <a href="Kalendarz.dc.html" style="width: 72px; height: 64px; border-radius: 14px; background: #F3E4EA; color: {{accent}}; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 600; text-decoration: none;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"></rect><path d="M8 3v4M16 3v4M3 10h18"></path></svg>
+      Kalendarz
+    </a>
+    <a href="Czekaja.dc.html" style="position: relative; width: 72px; height: 64px; border-radius: 14px; color: #6E655F; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 600; text-decoration: none;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+      Czekają
+      <span style="position: absolute; top: 6px; right: 14px; min-width: 20px; height: 20px; border-radius: 10px; background: {{accent}}; color: #FFFFFF; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center;">2</span>
+    </a>
+    <a href="Ustawienia.dc.html" style="width: 72px; height: 64px; border-radius: 14px; color: #6E655F; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 12px; font-weight: 600; text-decoration: none;">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+      Ustawienia
+    </a>
+  </nav>
+
+  <main style="flex-grow: 1; min-width: 0; display: flex; flex-direction: column; padding: 14px 16px 0;">
+    <div style="height: 56px; display: flex; align-items: center; gap: 8px;">
+      <button aria-label="Poprzedni dzień" style="width: 44px; height: 44px; border: 1.5px solid #E0D8D1; border-radius: 12px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#221C19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+      </button>
+      <button aria-label="Następny dzień" style="width: 44px; height: 44px; border: 1.5px solid #E0D8D1; border-radius: 12px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#221C19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"></path></svg>
+      </button>
+      <h1 style="margin: 0 0 0 8px; font-size: 22px; font-weight: 700; letter-spacing: -0.01em;">Środa, 12 listopada</h1>
+      <span style="height: 28px; padding: 0 10px; border-radius: 8px; background: #F3E4EA; color: {{accent}}; font-size: 13px; font-weight: 700; display: flex; align-items: center;">Dziś</span>
+      <div style="flex-grow: 1;"></div>
+      <div role="group" aria-label="Widok" style="height: 44px; display: flex; padding: 3px; box-sizing: border-box; border-radius: 12px; background: #EFE9E4;">
+        <button style="height: 38px; padding: 0 16px; border: 0; border-radius: 9px; background: #FFFFFF; color: #221C19; font-size: 15px; font-weight: 600; box-shadow: 0 1px 2px rgba(34,28,25,0.12); cursor: pointer;">Dzień</button>
+        <button style="height: 38px; padding: 0 16px; border: 0; border-radius: 9px; background: transparent; color: #6E655F; font-size: 15px; font-weight: 600; cursor: pointer;">Tydzień</button>
+      </div>
+      <a href="NowaWizyta.dc.html" style="height: 44px; padding: 0 18px; border-radius: 12px; background: {{accent}}; color: #FFFFFF; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 6px; text-decoration: none;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+        Wizyta
+      </a>
+    </div>
+
+    <div style="display: flex; margin-top: 10px; padding-left: 52px;">
+      <sc-for list="{{staff}}" as="s" hint-placeholder-count="4">
+        <div style="flex: 1 1 0; min-width: 0; height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 10px;">
+          <span style="width: 28px; height: 28px; border-radius: 14px; background: {{s.bg}}; color: {{s.ink}}; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;">{{s.initial}}</span>
+          <span style="font-size: 15px; font-weight: 600;">{{s.name}}</span>
+          <span style="font-size: 13px; color: #6E655F;">{{s.count}}</span>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="position: relative; display: flex; height: 600px;">
+      <div style="width: 52px; flex-shrink: 0; position: relative;">
+        <sc-for list="{{hours}}" as="h" hint-placeholder-count="10">
+          <span style="position: absolute; top: {{h.top}}px; left: 0; width: 44px; text-align: right; font-size: 12px; color: #6E655F; transform: translateY(-7px);">{{h.label}}</span>
+        </sc-for>
+      </div>
+      <sc-for list="{{staff}}" as="s" hint-placeholder-count="4">
+        <div style="flex: 1 1 0; min-width: 0; position: relative; height: 576px; margin: 0 3px; border-radius: 12px; background-color: {{s.colBg}}; background-image: repeating-linear-gradient(to bottom, #EDE6E0 0, #EDE6E0 1px, transparent 1px, transparent 64px);">
+          <sc-for list="{{s.items}}" as="v" hint-placeholder-count="3">
+            <div style="position: absolute; left: 4px; right: 4px; top: {{v.top}}px; height: {{v.h}}px; box-sizing: border-box; padding: 6px 10px; border-radius: 10px; background: {{v.bg}}; color: {{v.ink}}; border: {{v.border}}; overflow: hidden; display: flex; flex-direction: column; gap: 1px;">
+              <span style="font-size: 12px; font-weight: 600; opacity: 0.85;">{{v.time}}</span>
+              <span style="font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{v.title}}</span>
+              <span style="font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{v.sub}}</span>
+            </div>
+          </sc-for>
+        </div>
+      </sc-for>
+      <div aria-hidden="true" style="position: absolute; left: 46px; right: 0; top: 149px; height: 2px; background: {{accent}};">
+        <span style="position: absolute; left: -5px; top: -4px; width: 10px; height: 10px; border-radius: 5px; background: {{accent}};"></span>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#8A3A5A","options":["#8A3A5A","#2F5D62","#3B4A8C","#9A5B2E"]},"$preview":{"width":1024,"height":768}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#8A3A5A';
+    const H = 64, start = 9;
+    const t = (s) => { const [h, m] = s.split(':').map(Number); return (h - start) * H + (m / 60) * H; };
+    const visit = (from, to, title, sub, c, kind) => {
+      const base = { top: t(from) + 1, h: t(to) - t(from) - 2, time: from + ' – ' + to, title, sub };
+      if (kind === 'pending') return { ...base, bg: '#FFFFFF', ink: c.ink, border: '1.5px dashed ' + c.dot, sub: 'Czeka na Ciebie' };
+      if (kind === 'block') return { ...base, bg: 'repeating-linear-gradient(135deg, #EFE9E4 0, #EFE9E4 6px, #F7F3EF 6px, #F7F3EF 12px)', ink: '#6E655F', border: '0', time: from + ' – ' + to };
+      if (kind === 'free') return { ...base, bg: 'transparent', ink: accent, border: '1.5px dashed ' + accent, time: '', title: '+ Dodaj wizytę', sub: from };
+      return { ...base, bg: c.bg, ink: c.ink, border: '0' };
+    };
+    const C = {
+      ola: { bg: '#F6DDE6', ink: '#5E1F3A', dot: '#C2577F' },
+      kasia: { bg: '#DCE7F5', ink: '#1C3558', dot: '#4F7CB8' },
+      magda: { bg: '#E1EDDD', ink: '#284224', dot: '#5E8C57' },
+      ewa: { bg: '#F5E5CB', ink: '#4F3610', dot: '#C08A3E' }
+    };
+    const staff = [
+      { name: 'Ola', initial: 'O', c: C.ola, count: '4 wizyty', colBg: '#FFFFFF', items: [
+        visit('9:00', '10:00', 'Anna Nowak', 'Strzyżenie damskie', C.ola),
+        visit('10:30', '12:30', 'Beata Kowal', 'Koloryzacja', C.ola),
+        visit('13:00', '14:00', 'Przerwa', '', C.ola, 'block'),
+        visit('14:00', '14:45', 'Julia Wrona', 'Modelowanie', C.ola),
+        visit('15:30', '16:30', 'Marta Lis', 'Strzyżenie damskie', C.ola)
+      ]},
+      { name: 'Kasia', initial: 'K', c: C.kasia, count: '4 wizyty', colBg: '#FFFFFF', items: [
+        visit('9:30', '10:00', 'Piotr Zając', 'Strzyżenie męskie', C.kasia),
+        visit('11:00', '13:00', 'Karolina Mazur', 'Koloryzacja', C.kasia),
+        visit('14:00', '15:00', 'Ewelina Sowa', 'Strzyżenie damskie', C.kasia),
+        visit('16:00', '17:00', 'Natalia Bąk', '', C.kasia, 'pending')
+      ]},
+      { name: 'Magda', initial: 'M', c: C.magda, count: '3 wizyty', colBg: '#FFFFFF', items: [
+        visit('10:00', '11:00', 'Ola Zielińska', 'Manicure hybrydowy', C.magda),
+        visit('12:00', '13:00', 'Iza Kubiak', 'Manicure hybrydowy', C.magda),
+        visit('13:00', '14:00', '', '', C.magda, 'free'),
+        visit('15:00', '16:00', 'Dorota Pawlak', 'Pedicure', C.magda)
+      ]},
+      { name: 'Ewa', initial: 'E', c: C.ewa, count: 'urlop', colBg: '#FFFFFF', items: [
+        visit('9:00', '18:00', 'Urlop', 'do piątku', C.ewa, 'block')
+      ]}
+    ].map((s) => ({ ...s, bg: s.c.bg, ink: s.c.ink }));
+    const hours = [];
+    for (let h = 9; h <= 18; h++) hours.push({ label: h + ':00', top: (h - start) * H });
+    return { accent, staff, hours };
+  }
+}
+</script>
+</body>
+</html>

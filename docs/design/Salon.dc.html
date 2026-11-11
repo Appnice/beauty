@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>O salonie</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#8A3A5A}a:hover{color:#6E2A46}
+input,textarea,button{font:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FAF7F4; color: #221C19; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; flex-direction: column; padding: 24px 24px 32px;">
+  <div style="display: flex; align-items: center; justify-content: space-between; height: 44px;">
+    <a href="Kod.dc.html" aria-label="Wstecz" style="width: 44px; height: 44px; margin-left: -10px; display: flex; align-items: center; justify-content: center; border-radius: 12px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#221C19" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>
+    </a>
+    <span style="font-size: 14px; color: #6E655F;">3 z 6</span>
+  </div>
+  <div style="height: 4px; border-radius: 2px; background: #EAE3DD; margin-top: 12px;"><div style="width: 50%; height: 4px; border-radius: 2px; background: {{accent}};"></div></div>
+
+  <h1 style="margin: 28px 0 0; font-size: 32px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em;">O salonie</h1>
+
+  <div style="display: flex; flex-direction: column; gap: 14px; margin-top: 20px;">
+    <label style="display: flex; flex-direction: column; gap: 6px; font-size: 15px; font-weight: 600;">Miejscowość
+      <input value="Legnica" style="height: 52px; box-sizing: border-box; padding: 0 16px; border: 1.5px solid #E0D8D1; border-radius: 14px; background: #FFFFFF; font-size: 17px; color: #221C19; outline: none;">
+    </label>
+    <label style="display: flex; flex-direction: column; gap: 6px; font-size: 15px; font-weight: 600;">Ulica i numer
+      <input value="Chojnowska 12" style="height: 52px; box-sizing: border-box; padding: 0 16px; border: 1.5px solid #E0D8D1; border-radius: 14px; background: #FFFFFF; font-size: 17px; color: #221C19; outline: none;">
+    </label>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <span style="font-size: 15px; font-weight: 600;">Ile osób pracuje?</span>
+      <div role="radiogroup" aria-label="Ile osób pracuje" style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;">
+        <sc-for list="{{sizes}}" as="s" hint-placeholder-count="4">
+          <button role="radio" aria-checked="{{s.checked}}" style="height: 48px; border-radius: 12px; border: {{s.border}}; background: {{s.bg}}; color: {{s.ink}}; font-size: 16px; font-weight: 600; cursor: pointer;">{{s.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+    <label style="display: flex; flex-direction: column; gap: 6px; font-size: 15px; font-weight: 600;">Instagram, Facebook lub strona
+      <input value="instagram.com/studio.ola" style="height: 52px; box-sizing: border-box; padding: 0 16px; border: 1.5px solid {{accent}}; border-radius: 14px; background: #FFFFFF; font-size: 17px; color: #221C19; outline: none;">
+    </label>
+    <label style="display: flex; flex-direction: column; gap: 6px; font-size: 15px; font-weight: 600;">Czym się zajmujecie?
+      <textarea style="height: 88px; box-sizing: border-box; padding: 12px 16px; border: 1.5px solid #E0D8D1; border-radius: 14px; background: #FFFFFF; font-size: 17px; line-height: 1.4; color: #221C19; outline: none; resize: none;">Fryzjer damski i męski, koloryzacja, paznokcie.</textarea>
+    </label>
+  </div>
+
+  <div style="flex-grow: 1;"></div>
+
+  <a href="Uslugi.dc.html" style="height: 56px; border-radius: 14px; background: {{accent}}; color: #FFFFFF; font-size: 18px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none;">Dalej</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#8A3A5A","options":["#8A3A5A","#2F5D62","#3B4A8C","#9A5B2E"]},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#8A3A5A';
+    const picked = '2–3';
+    return {
+      accent,
+      sizes: ['1', '2–3', '4–6', '7+'].map((label) => {
+        const on = label === picked;
+        return {
+          label,
+          checked: on ? 'true' : 'false',
+          bg: on ? accent : '#FFFFFF',
+          ink: on ? '#FFFFFF' : '#221C19',
+          border: on ? '1.5px solid ' + accent : '1.5px solid #E0D8D1'
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

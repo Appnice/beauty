@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<title>Nowa wizyta</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#8A3A5A}a:hover{color:#6E2A46}
+input,button{font:inherit}
+</style>
+</helmet>
+<div style="position: relative; width: 1024px; height: 768px; overflow: hidden; color: #221C19; font-family: 'Plus Jakarta Sans', system-ui, sans-serif;">
+  <dc-import name="Kalendarz" accent="{{accent}}" hint-size="1024px,768px"></dc-import>
+  <a href="Kalendarz.dc.html" aria-label="Zamknij" style="position: absolute; inset: 0; background: rgba(34,28,25,0.32);"></a>
+
+  <section aria-label="Nowa wizyta" style="position: absolute; top: 0; right: 0; width: 420px; height: 768px; box-sizing: border-box; background: #FAF7F4; box-shadow: -12px 0 32px rgba(34,28,25,0.18); display: flex; flex-direction: column; padding: 20px 24px 24px;">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <h2 style="margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.01em;">Nowa wizyta</h2>
+      <a href="Kalendarz.dc.html" aria-label="Zamknij" style="width: 44px; height: 44px; margin-right: -10px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#221C19" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </a>
+    </div>
+
+    <div style="margin-top: 14px; height: 52px; display: flex; align-items: center; gap: 10px; padding: 0 14px; border-radius: 14px; background: #E1EDDD; color: #284224;">
+      <span style="width: 28px; height: 28px; border-radius: 14px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700;">M</span>
+      <span style="font-size: 16px; font-weight: 700;">Magda</span>
+      <span style="font-size: 16px;">· śr 12.11 · 13:00</span>
+    </div>
+
+    <label style="display: flex; flex-direction: column; gap: 8px; margin-top: 22px; font-size: 15px; font-weight: 600;">Telefon
+      <input value="601 22" inputmode="tel" style="height: 56px; box-sizing: border-box; padding: 0 16px; border: 2px solid {{accent}}; border-radius: 14px; background: #FFFFFF; font-size: 18px; color: #221C19; outline: none;">
+    </label>
+    <button style="margin-top: 6px; height: 60px; display: flex; align-items: center; gap: 12px; padding: 0 14px; border: 1.5px solid #E0D8D1; border-radius: 14px; background: #FFFFFF; text-align: left; cursor: pointer;">
+      <span style="width: 36px; height: 36px; border-radius: 18px; background: #F3E4EA; color: {{accent}}; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</span>
+      <span style="display: flex; flex-direction: column; flex-grow: 1;">
+        <span style="font-size: 16px; font-weight: 700; color: #221C19;">Anna Nowak</span>
+        <span style="font-size: 14px; color: #6E655F;">601 223 908 · była 5 razy</span>
+      </span>
+    </button>
+
+    <label style="display: flex; flex-direction: column; gap: 8px; margin-top: 18px; font-size: 15px; font-weight: 600;">Imię
+      <input value="Anna Nowak" style="height: 56px; box-sizing: border-box; padding: 0 16px; border: 1.5px solid #E0D8D1; border-radius: 14px; background: #FFFFFF; font-size: 18px; color: #221C19; outline: none;">
+    </label>
+
+    <p style="margin: 18px 0 8px; font-size: 15px; font-weight: 600;">Usługa</p>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <sc-for list="{{services}}" as="s" hint-placeholder-count="4">
+        <button style="height: 44px; padding: 0 14px; border-radius: 12px; border: {{s.border}}; background: {{s.bg}}; color: {{s.ink}}; font-size: 15px; font-weight: 600; cursor: pointer;">{{s.label}}</button>
+      </sc-for>
+    </div>
+
+    <div style="flex-grow: 1;"></div>
+    <a href="Kalendarz.dc.html" style="height: 56px; border-radius: 14px; background: {{accent}}; color: #FFFFFF; font-size: 18px; font-weight: 600; display: flex; align-items: center; justify-content: center; text-decoration: none;">Zapisz · 13:00–14:00</a>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#8A3A5A","options":["#8A3A5A","#2F5D62","#3B4A8C","#9A5B2E"]},"$preview":{"width":1024,"height":768}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#8A3A5A';
+    const list = [['Manicure hybrydowy · 60 min', true], ['Pedicure · 60 min', false], ['Brwi i rzęsy · 30 min', false]];
+    return {
+      accent,
+      services: list.map(([label, on]) => ({
+        label,
+        bg: on ? accent : '#FFFFFF',
+        ink: on ? '#FFFFFF' : '#221C19',
+        border: on ? '1.5px solid ' + accent : '1.5px solid #E0D8D1'
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

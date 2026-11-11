@@ -1,0 +1,88 @@
+# Własny serwer (self-hosting): jeden salon na jednym komputerze.
+#   cp .env.example .env    (zmień APP_SECRET i POSTGRES_PASSWORD)
+#   docker compose up -d    -> http://localhost:8080 (pierwsze wejście: "Załóż salon", potem zapisy są zamknięte)
+# Z domeną i HTTPS: ustaw DOMAIN i PUBLIC_URL=https://<domena> w .env, potem
+#   docker compose --profile domain up -d    (Caddy na portach 80/443 pobiera certyfikat sam)
+# Programiści: lokalna baza do pracy jest w compose.dev.yaml (make db).
+name: beauty
+services:
+  app:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    image: beauty-app:selfhost
+    restart: unless-stopped
+    mem_limit: 256m
+    ports:
+      - '127.0.0.1:${PORT:-8080}:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      NODE_OPTIONS: --max-old-space-size=160
+      PORT: '3000'
+      DATABASE_URL: postgres://beauty:${POSTGRES_PASSWORD:-beauty}@db:5432/beauty
+      APP_SECRET: ${APP_SECRET:?set APP_SECRET in .env}
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:8080}
+      ORIGIN: ${PUBLIC_URL:-http://localhost:8080}
+      PROTOCOL_HEADER: ${PROTOCOL_HEADER:-}
+      ADDRESS_HEADER: ${ADDRESS_HEADER:-}
+      XFF_DEPTH: ${XFF_DEPTH:-1}
+      SINGLE_SALON: ${SINGLE_SALON:-on}
+      SMS_PROVIDER: ${SMS_PROVIDER:-log}
+      SMSAPI_TOKEN: ${SMSAPI_TOKEN:-}
+      SMSAPI_SENDER: ${SMSAPI_SENDER:-}
+      SMS_ECHO: ${SMS_ECHO:-off}
+      SMS_MONTHLY_LIMIT: ${SMS_MONTHLY_LIMIT:-300}
+      SEED_DEMO: ${SEED_DEMO:-off}
+      OPERATOR_NAME: ${OPERATOR_NAME:-operator tego serwera}
+      JOBS: 'on'
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"
+        ]
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+
+  db:
+    image: postgres:16.15-alpine
+    restart: unless-stopped
+    mem_limit: 256m
+    environment:
+      POSTGRES_USER: beauty
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-beauty}
+      POSTGRES_DB: beauty
+      TZ: UTC
+    volumes:
+      - beauty-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U beauty -d beauty']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # Opcjonalnie: domena z HTTPS (docker compose --profile domain up -d). Wymaga DOMAIN w .env.
+  caddy:
+    image: caddy:2.10.2-alpine
+    profiles: ['domain']
+    restart: unless-stopped
+    depends_on: [app]
+    ports:
+      - '80:80'
+      - '443:443'
+    environment:
+      DOMAIN: ${DOMAIN:-}
+    command: ['caddy', 'reverse-proxy', '--from', '${DOMAIN:-localhost}', '--to', 'app:3000']
+    volumes:
+      - caddy-data:/data
+
+volumes:
+  beauty-db:
+  caddy-data:
