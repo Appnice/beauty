@@ -2,14 +2,16 @@
 # Build from the repo root: docker build -f deploy/Dockerfile -t beauty-app .
 # Stage 1 "build": all dependencies + vite build. Stage 2 "deps": production dependencies only.
 # Stage 3 "run": build/, migrations/, prod node_modules, package.json. Migrations run at start (hooks.server.ts).
-FROM node:26.11.1-slim AS build
+# Stages 1 and 2 run on the BUILD platform: esbuild (Go) crashes under QEMU when the Mac builds linux/amd64, and
+# their output is plain JS (no production dependency has a native addon or an install script). Only "run" is amd64.
+FROM --platform=$BUILDPLATFORM node:26.11.1-slim AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY . .
 RUN npx svelte-kit sync && npx vite build
 
-FROM node:26.11.1-slim AS deps
+FROM --platform=$BUILDPLATFORM node:26.11.1-slim AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --omit=dev --ignore-scripts --no-audit --no-fund && npm cache clean --force
