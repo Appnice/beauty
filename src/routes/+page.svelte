@@ -36,7 +36,7 @@
   <ul class="facts">
     <li><strong>Kalendarz</strong><span>kolumna na każdą osobę</span></li>
     <li><strong>Zapisy online</strong><span>klient sam wybiera termin</span></li>
-    <li><strong>SMS</strong><span>przypomnienie dzień przed</span></li>
+    <li><strong>Na telefonie</strong><span>każdy widzi swój dzień</span></li>
     <li><strong>0 zł prowizji</strong><span>od żadnej wizyty</span></li>
   </ul>
 
