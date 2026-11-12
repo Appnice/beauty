@@ -39,6 +39,12 @@
     <li><strong>SMS</strong><span>przypomnienie dzień przed</span></li>
     <li><strong>0 zł prowizji</strong><span>od żadnej wizyty</span></li>
   </ul>
+
+  <a class="v2b" href="https://vote2build.com/p/1">
+    <span class="bar" aria-hidden="true"></span>
+    <span>Wybrane głosami. Zbudowane za darmo.</span>
+    <span class="src">vote2build #001</span>
+  </a>
 </main>
 
 <style>
@@ -122,6 +128,31 @@
   .shots,
   .facts {
     display: none;
+  }
+  /* the vote2build signature: the same full yellow meter as in the logo, same words in every product */
+  .v2b {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    min-height: 44px;
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .v2b .bar {
+    width: 36px;
+    height: 8px;
+    border-radius: 2px;
+    background: #ffd21f;
+    box-shadow: inset 0 0 0 1.5px #141413;
+  }
+  .v2b .src {
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   @media (min-width: 960px) {
