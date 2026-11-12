@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# MAIN SESSION ONLY. Deploys beauty to the shared VPS (https://beauty.appnice.dev). Idempotent. docs/deploy.md.
+# MAIN SESSION ONLY. Deploys beauty to the shared VPS (https://beauty.vote2build.com). Idempotent. docs/deploy.md.
 #
 #   SSH_TARGET=user@host make deploy     build, back up, ship, write .env if missing, start, wait, Caddy once, smoke
 #   SECRETS=1 ...                        also rewrite /opt/beauty/.env from the Keychain
@@ -24,7 +24,7 @@ HOST=${SSH_TARGET:-}
 [[ -n "$HOST" ]] || { echo "deploy: set SSH_TARGET (user@host of the VPS); it is not stored in the repo" >&2; exit 1; }
 DIR=/opt/beauty
 PORT=8150
-DOMAIN=${DOMAIN:-beauty.appnice.dev}
+DOMAIN=${DOMAIN:-beauty.vote2build.com}
 PUBLIC_URL=https://$DOMAIN
 STAGE=${STAGE:-build/deploy}
 P="docker compose -p beauty -f $DIR/compose.yml"

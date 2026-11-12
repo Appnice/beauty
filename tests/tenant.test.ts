@@ -213,10 +213,12 @@ describe('S1.C4 tenant isolation', () => {
     expect(await resolveSalon(sql, { path: '/nie-ma-takiego' })).toBeNull();
     await sql`update salon set host = 'zapisy.salon-b.pl' where id = ${B.salon.id}`;
     expect(
-      (await resolveSalon(sql, { path: '/', host: 'zapisy.salon-b.pl' }, ['beauty.appnice.dev']))!.id
+      (await resolveSalon(sql, { path: '/', host: 'zapisy.salon-b.pl' }, ['beauty.vote2build.com']))!.id
     ).toBe(B.salon.id);
     expect(
-      (await resolveSalon(sql, { path: '/salon-a', host: 'beauty.appnice.dev' }, ['beauty.appnice.dev']))!.id
+      (await resolveSalon(sql, { path: '/salon-a', host: 'beauty.vote2build.com' }, [
+        'beauty.vote2build.com'
+      ]))!.id
     ).toBe(A.salon.id);
     await sql`update salon set host = null where id = ${B.salon.id}`;
   });

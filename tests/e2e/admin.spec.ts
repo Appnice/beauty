@@ -55,7 +55,7 @@ test('accept one salon, reject another, purge after 30 days', async ({ page, req
     await db()`select body from notification where salon_id = ${a.id} and type = 'salon_przyjety'`;
   expect(ownerSms).toHaveLength(1);
   expect(ownerSms[0].body).toBe(
-    `Salon przyjety. Zapisy online dzialaja: https://beauty.appnice.dev/${a.slug}`
+    `Salon przyjety. Zapisy online dzialaja: https://beauty.vote2build.com/${a.slug}`
   );
   const adminSms =
     await db()`select to_phone from notification where salon_id = ${a.id} and type = 'admin_nowy_salon'`;

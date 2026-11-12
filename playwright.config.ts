@@ -9,7 +9,7 @@ export const E2E_ENV = {
   ORIGIN: 'http://localhost:8151',
   DATABASE_URL: DB,
   APP_SECRET: 'e2e-secret-not-for-production',
-  PUBLIC_URL: 'https://beauty.appnice.dev',
+  PUBLIC_URL: 'https://beauty.vote2build.com',
   SMS_PROVIDER: 'log',
   SMS_ECHO: 'on',
   SIGNUP_CODE: '',

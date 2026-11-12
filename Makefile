@@ -72,7 +72,7 @@ deploy-test:
 deploy:
 	tools/deploy.sh
 
-## MAIN SESSION ONLY: add the beauty.appnice.dev site to the VPS Caddyfile once (validate, reload, restore)
+## MAIN SESSION ONLY: add the beauty.vote2build.com site to the VPS Caddyfile once (validate, reload, restore)
 deploy-caddy:
 	tools/deploy-caddy.sh
 

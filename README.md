@@ -59,7 +59,7 @@ a zakładanie kolejnych się zamyka. Bez bramki SMS kod z SMS-a jest w logu: `do
 - **Aktualizacja:** `git pull && docker compose up -d --build`. Zmiany w bazie wchodzą same przy starcie.
 - **Pamięć:** aplikacja i baza mają po 256 MB limitu; wystarcza mały serwer (zmierzone szczyty w `docs/deploy.md`).
 
-Wersja hostowana (beauty.appnice.dev) korzysta z `deploy/compose.yml`; opis w `docs/deploy.md`.
+Wersja hostowana (beauty.vote2build.com) korzysta z `deploy/compose.yml`; opis w `docs/deploy.md`.
 
 ## Uruchomienie lokalne (programiści)
 

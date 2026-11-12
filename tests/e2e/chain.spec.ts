@@ -59,7 +59,7 @@ test('the whole chain: sign-up, approval, booking, waiting list, phone visit, re
   await op.goto('/zaloz');
   await expect(op.getByText('1 z 6')).toBeVisible();
   await op.getByLabel('Nazwa salonu').fill(SALON);
-  await expect(op.getByText(`beauty.appnice.dev/${SLUG}`)).toBeVisible();
+  await expect(op.getByText(`beauty.vote2build.com/${SLUG}`)).toBeVisible();
   await op.getByLabel('Twój telefon').fill(OWNER_PHONE);
   await op.getByLabel('Hasło').fill(PASSWORD);
   await op.getByRole('button', { name: 'Dalej' }).click();
@@ -229,7 +229,7 @@ test('the whole chain: sign-up, approval, booking, waiting list, phone visit, re
   expect(rem[0].body).toMatch(new RegExp(`^${SALON}: jutro .* o 09:00, Strzyzenie damskie\\. Odwolanie: `));
 
   // 10. the client cancels from the SMS link; the time is free again
-  const link = rem[0].body.match(/https:\/\/beauty\.appnice\.dev(\/w\/\S+)$/)![1];
+  const link = rem[0].body.match(/https:\/\/beauty\.vote2build\.com(\/w\/\S+)$/)![1];
   await c1.goto(link);
   await expect(c1.getByTestId('status')).toHaveText('Wizyta potwierdzona');
   await c1.getByRole('link', { name: 'Odwołaj wizytę' }).click();

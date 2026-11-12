@@ -1,4 +1,4 @@
-# Hosted instance (https://beauty.appnice.dev): compose project `beauty` in /opt/beauty on the VPS.
+# Hosted instance (https://beauty.vote2build.com): compose project `beauty` in /opt/beauty on the VPS.
 # tools/deploy.sh ships this file + the image; /opt/beauty/.env (from the Keychain) fills the ${VARS}.
 # The app listens on 127.0.0.1 only; the shared Caddy proxies to it. Postgres has no published port.
 # tools/deploy-local.sh runs the same file on the Mac as project beauty-deploy-local (APP_PORT=8152).

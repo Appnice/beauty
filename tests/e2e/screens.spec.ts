@@ -374,7 +374,7 @@ test('owner panel screens at 1024 px match the design; week, 390 and 1440 px', a
   await shoot(page, 'Ustawienia');
   await copyCheck(page, 'Ustawienia', t.Ustawienia);
   await page.getByRole('link', { name: /Link do zapisów/ }).click();
-  await expect(page.getByTestId('booking-link')).toHaveText('beauty.appnice.dev/studio-ola');
+  await expect(page.getByTestId('booking-link')).toHaveText('beauty.vote2build.com/studio-ola');
   await shoot(page, 'Ustawienia-link');
   await page.goto('/studio-ola/panel/ustawienia/zespol');
   await expect(page.getByTestId('person-row')).toHaveCount(4);

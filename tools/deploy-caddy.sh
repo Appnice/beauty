@@ -6,12 +6,12 @@
 #
 # Env (no host defaults in the repo): SSH_TARGET, CADDYFILE (host path of the shared Caddyfile), CADDY_CONTAINER
 # (the Caddy container name), optional CADDY_CHECK_SITES (space-separated URLs that must keep answering).
-# DOMAIN (beauty.appnice.dev) and UPSTREAM (127.0.0.1:8150) have defaults. The remote part is
+# DOMAIN (beauty.vote2build.com) and UPSTREAM (127.0.0.1:8150) have defaults. The remote part is
 # tools/caddy-remote.sh: append once, backup, validate, reload, restore on failure. Reads no secret.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-DOMAIN=${DOMAIN:-beauty.appnice.dev}
+DOMAIN=${DOMAIN:-beauty.vote2build.com}
 UPSTREAM=${UPSTREAM:-127.0.0.1:8150}
 
 site_block() { # $1 = site address, $2 = upstream

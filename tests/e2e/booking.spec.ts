@@ -60,7 +60,7 @@ async function waitForTypes(salonId: string, want: string[]) {
 async function smsLink(salonId: string, type: string): Promise<string> {
   const [n] = await db()<{ body: string }[]>`
     select body from notification where salon_id = ${salonId} and type = ${type} order by created_at desc limit 1`;
-  const m = n.body.match(/https:\/\/beauty\.appnice\.dev(\/w\/\S+)$/);
+  const m = n.body.match(/https:\/\/beauty\.vote2build\.com(\/w\/\S+)$/);
   expect(m, n.body).toBeTruthy();
   return m![1];
 }

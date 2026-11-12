@@ -12,7 +12,7 @@ const PL = /[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/;
 const LONG_SALON = 'Pracownia Fryzjersko-Kosmetyczna „Złota Nożyczka” Małgorzata Żółkiewska-Szczęsna';
 const LONG_SERVICE = 'Koloryzacja globalna z tonowaniem, pielęgnacją keratynową i modelowaniem na szczotce';
 const LONG_CLIENT = 'Katarzyna Grzegorzewska-Brzęczyszczykiewicz';
-const BASE = 'https://beauty.appnice.dev';
+const BASE = 'https://beauty.vote2build.com';
 const STATUS = `${BASE}/w/${visitToken('3f0c2b8e-6a1d-4f5e-9b7a-1c2d3e4f5a6b')}`;
 const BOOK = `${BASE}/pracownia-fryzjersko-kosmetyczna-zlota-n`; // a 40-character slug
 const PANEL = `${BASE}/pracownia-fryzjersko-kosmetyczna-zlota-n/panel/czekaja`;
@@ -35,8 +35,8 @@ const CASES: [string, string, string | null][] = [
 ];
 
 describe('SMS templates', () => {
-  it('the status link is short (about 75 characters)', () => {
-    expect(STATUS.length).toBeLessThanOrEqual(76);
+  it('the status link is short (about 77 characters, beauty.vote2build.com)', () => {
+    expect(STATUS.length).toBeLessThanOrEqual(78);
   });
 
   it.each(CASES)(

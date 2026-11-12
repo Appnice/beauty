@@ -13,7 +13,7 @@ test('owner sign-up with approval, Back keeps the data', async ({ page }) => {
   await page.goto('/zaloz');
   await expect(page.getByText('1 z 6')).toBeVisible();
   await page.getByLabel('Nazwa salonu').fill('Studio Ewelina');
-  await expect(page.getByText('beauty.appnice.dev/studio-ewelina')).toBeVisible();
+  await expect(page.getByText('beauty.vote2build.com/studio-ewelina')).toBeVisible();
   await page.getByLabel('Twój telefon').fill('600 321 654');
   await page.getByLabel('Hasło').fill('haslo-ewelina');
   await noHorizontalScroll(page);

@@ -104,7 +104,7 @@ grep -qF "deploy/compose.yml tools/backup.sh tools/restore.sh $T/stage/beauty-ap
 keys=$(cut -d= -f1 "$T/env-sent" | tr '\n' ' ')
 [ "$keys" = "BEAUTY_DB_PASSWORD APP_SECRET ADMIN_PASSWORD PUBLIC_URL APP_PORT SEED_DEMO SMS_ECHO ADMIN_PHONE SMSAPI_TOKEN OPERATOR_NAME " ] \
   && ok ".env keys: $keys" || bad ".env keys: $keys"
-grep -qx 'BEAUTY_DB_PASSWORD=FAKE-db-7f3a91' "$T/env-sent" && grep -qx 'PUBLIC_URL=https://beauty.appnice.dev' "$T/env-sent" \
+grep -qx 'BEAUTY_DB_PASSWORD=FAKE-db-7f3a91' "$T/env-sent" && grep -qx 'PUBLIC_URL=https://beauty.vote2build.com' "$T/env-sent" \
   && grep -qx 'SMS_ECHO=off' "$T/env-sent" && ok ".env values from the Keychain stub, PUBLIC_URL https, SMS_ECHO off" || bad ".env values"
 grep -qx "OPERATOR_NAME='FAKE Operator sp. z o.o., ul. Testowa 1'" "$T/env-sent" \
   && ok "OPERATOR_NAME from Keychain beauty-operator-name, single-quoted" || bad "OPERATOR_NAME line"
@@ -119,19 +119,19 @@ for f in "$T"/kc-*; do
   grep -qF -- "$v" "$T/args.log" && { leak=1; echo "  in ssh/rsync/docker arguments or remote scripts: ${f##*/kc-}"; }
 done
 [ "$leak" = 0 ] && ok "no secret value ($(ls "$T"/kc-* | wc -l | tr -d ' ') items) in the output, arguments or remote scripts" || bad "secret leak"
-[ "$(grep -c '^beauty.appnice.dev {' "$cf")" = 1 ] && ok "Caddy step added the site block" || bad "caddy block not added"
+[ "$(grep -c '^beauty.vote2build.com {' "$cf")" = 1 ] && ok "Caddy step added the site block" || bad "caddy block not added"
 
 # 5: second deploy: .env exists, no rewrite; Caddy unchanged.
 rm -f "$T/env-sent"; cp "$cf" "$T/cf-after-1"
 STAGE="$T/stage" SSH_TARGET=stub@invalid SKIP_BUILD=1 SKIP_SMOKE=1 HEALTH_WAIT_S=0 tools/deploy.sh > "$T/out2.log" 2>&1 || { bad "second deploy"; cat "$T/out2.log"; }
 [ ! -f "$T/env-sent" ] && ok "second deploy keeps the host .env (no SECRETS=1)" || bad ".env rewritten"
-grep -q 'already configured, no change' "$T/out2.log" && cmp -s "$cf" "$T/cf-after-1" && [ "$(grep -c '^beauty.appnice.dev {' "$cf")" = 1 ] \
+grep -q 'already configured, no change' "$T/out2.log" && cmp -s "$cf" "$T/cf-after-1" && [ "$(grep -c '^beauty.vote2build.com {' "$cf")" = 1 ] \
   && ok "second run adds no second site block" || bad "caddy idempotence"
 
 # 6: caddy-remote.sh restore paths.
 printf '%s\n' "$orig" > "$cf"; cp "$cf" "$T/cf-orig"; rm -f "$T"/Caddyfile.bak-* "$T/reloaded"
 b64=$(tools/deploy-caddy.sh --print | base64 | tr -d '\n')
-run_remote() { CADDY_SETTLE_S=0 CADDY_WAIT_S=0 CADDY_WAIT_TRIES=1 bash tools/caddy-remote.sh beauty.appnice.dev "$b64" "$cf" stub-caddy "https://other.example/" > "$T/caddy.log" 2>&1; }
+run_remote() { CADDY_SETTLE_S=0 CADDY_WAIT_S=0 CADDY_WAIT_TRIES=1 bash tools/caddy-remote.sh beauty.vote2build.com "$b64" "$cf" stub-caddy "https://other.example/" > "$T/caddy.log" 2>&1; }
 touch "$T/validate-fails"
 ! run_remote && cmp -s "$cf" "$T/cf-orig" && grep -q 'validate failed, restoring' "$T/caddy.log" \
   && ok "failed validate restores the Caddyfile byte for byte" || { bad "restore on validate"; cat "$T/caddy.log"; }
@@ -141,8 +141,8 @@ rm -f "$T/validate-fails" "$T/reloaded"; touch "$T/down-after"
 rm -f "$T/down-after"
 if CADDYFILE= SSH_TARGET=stub@invalid tools/deploy-caddy.sh > "$T/c3.log" 2>&1; then bad "deploy-caddy.sh ran without CADDYFILE"
 else grep -q 'set CADDYFILE' "$T/c3.log" && ok "deploy-caddy.sh needs CADDYFILE (no host default)" || bad "CADDYFILE message"; fi
-want=$'beauty.appnice.dev {\n\theader -Server\n\tencode zstd gzip\n\treverse_proxy 127.0.0.1:8150\n}'
-[ "$(tools/deploy-caddy.sh --print)" = "$want" ] && ok "site block beauty.appnice.dev -> 127.0.0.1:8150" || bad "site block"
+want=$'beauty.vote2build.com {\n\theader -Server\n\tencode zstd gzip\n\treverse_proxy 127.0.0.1:8150\n}'
+[ "$(tools/deploy-caddy.sh --print)" = "$want" ] && ok "site block beauty.vote2build.com -> 127.0.0.1:8150" || bad "site block"
 
 # 7: rollback, backup retention, no host in the files.
 rm -f "$T"/remote/*

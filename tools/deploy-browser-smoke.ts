@@ -36,7 +36,7 @@ try {
   await p1.setViewportSize({ width: 390, height: 844 });
   await p1.goto(`${base}/zaloz`);
   await p1.getByLabel('Nazwa salonu').fill('Studio Smoke Próba');
-  await expect(p1.getByText('beauty.appnice.dev/studio-smoke-proba')).toBeVisible({ timeout: 10_000 });
+  await expect(p1.getByText('beauty.vote2build.com/studio-smoke-proba')).toBeVisible({ timeout: 10_000 });
   ok('/zaloz hydrates: the address follows the typed name');
 
   const p2 = await ctx.newPage();

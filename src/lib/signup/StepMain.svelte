@@ -54,7 +54,7 @@
     </label>
     <div class="addr">
       <Icon name="link" size={14} color="#6E655F" />
-      beauty.appnice.dev/<b>{w.slug || 'twoj-salon'}</b>
+      beauty.vote2build.com/<b>{w.slug || 'twoj-salon'}</b>
     </div>
     <PhoneInput bind:value={w.phone} />
     <label class="field">

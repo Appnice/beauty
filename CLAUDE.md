@@ -1,7 +1,7 @@
 # beauty: free, open-source booking system for small salons
 
 One SvelteKit 2 app (Svelte 5, TS, adapter-node) + PostgreSQL 16 + pg-boss (same DB). Spec (Polish, binding):
-`~/appnice-apps/projects/beauty/RFC.md`. Hosted: https://beauty.appnice.dev (not deployed yet). Deploy + self-host: `docs/deploy.md`.
+`~/appnice-apps/projects/beauty/RFC.md`. Hosted: https://beauty.vote2build.com (moved from beauty.appnice.dev 2026-11-12). Deploy + self-host: `docs/deploy.md`.
 
 ## Commands
 
