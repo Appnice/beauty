@@ -113,7 +113,10 @@ Własny serwer: `.env.example` i `compose.yaml`. Programiści mogą trzymać swo
 
 ## Licencja
 
-Do ustalenia (MIT albo AGPL).
+GNU Affero General Public License v3.0 (AGPL-3.0-only), pełny tekst w pliku [LICENSE](LICENSE). Możesz używać,
+zmieniać i stawiać u siebie za darmo. Jeśli udostępniasz zmienioną wersję innym przez sieć, udostępnij też jej kod.
+
+© 2026 Appnice
 
 ---
 

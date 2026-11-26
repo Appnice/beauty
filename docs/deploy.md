@@ -4,7 +4,7 @@ Two compose files use one image (`deploy/Dockerfile`):
 
 | File | For | App | Database |
 |---|---|---|---|
-| `deploy/compose.yml` | the hosted instance https://beauty.appnice.dev (project `beauty`, `/opt/beauty` on the VPS) | `127.0.0.1:8150`, 256m, many salons with approval, demo salon | Postgres 16.15, 256m, no published port, volume `beauty_beauty-db` |
+| `deploy/compose.yml` | the hosted instance https://beauty.vote2build.com (project `beauty`, `/opt/beauty` on the VPS) | `127.0.0.1:8150`, 256m, many salons with approval, demo salon | Postgres 16.15, 256m, no published port, volume `beauty_beauty-db` |
 | `compose.yaml` (repo root) | self-hosters: `cp .env.example .env && docker compose up -d` | `127.0.0.1:${PORT:-8080}`, 256m, `SINGLE_SALON=on` | same, password from `POSTGRES_PASSWORD` |
 | `compose.dev.yaml` | development only (`make db`) | none | `127.0.0.1:55440`, project `beauty-local` |
 
@@ -57,10 +57,10 @@ No host name, IP or path of the VPS is in the repo: they come from the environme
    `beauty-operator-name`. When neither is set, the script prints a warning and the page shows
    'operator tego serwera'.
 6. `docker compose -p beauty up -d`, waits for the healthcheck, prints `docker stats`.
-7. `tools/deploy-caddy.sh`: appends the `beauty.appnice.dev` site block to the shared Caddyfile once (an awk
+7. `tools/deploy-caddy.sh`: appends the `beauty.vote2build.com` site block to the shared Caddyfile once (an awk
    check), with a backup, `caddy validate` then `caddy reload`, and restores the backup when validate or reload
    fails or a site in `CADDY_CHECK_SITES` stops answering. `tools/deploy-caddy.sh --print` prints the block.
-8. Smokes against `https://beauty.appnice.dev`: `tools/deploy-smoke.sh` and `tools/deploy-browser-smoke.ts`.
+8. Smokes against `https://beauty.vote2build.com`: `tools/deploy-smoke.sh` and `tools/deploy-browser-smoke.ts`.
 
 `make rollback` puts `beauty-app:prev` back. A migration of the newer image stays in the database; when the old
 image cannot run on it, restore the `predeploy` dump with `restore.sh`.
@@ -98,7 +98,7 @@ below the cap. The VPS is linux/amd64; its numbers can differ a little.
 
 ## Owner actions (not done by the harness)
 
-- Run `make deploy` with `SSH_TARGET`, `CADDYFILE` and `CADDY_CONTAINER`; DNS for `beauty.appnice.dev`.
+- Run `make deploy` with `SSH_TARGET`, `CADDYFILE` and `CADDY_CONTAINER`; DNS for `beauty.vote2build.com`.
 - Add the Keychain items `beauty-admin-phone` and `beauty-admin-notify-url` (optional) before the first deploy.
 - Add the Keychain item `beauty-operator-name` (legal name and address of the operator) before the first deploy.
   Without it the privacy page shows 'operator tego serwera'. On a later change: `SECRETS=1 make deploy`.

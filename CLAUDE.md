@@ -54,7 +54,6 @@ Ports: dev 8150, tests/manual servers 8151-8159. Docker is shared: only projects
 - `tests/e2e/*.spec.ts` Playwright, one worker, one DB: each spec cleans what it needs (`helpers.ts`).
   `screens.spec.ts` renders `docs/design/*.dc.html` with the local `docs/design/support.js` and checks the copy.
 - `docs/design/` = copy of the approved design (`projects/beauty/design/`); `tools/side-by-side.html` shows pairs.
-- `tools/harness_watchdog.py` belongs to the main session: do not change it.
 
 ## Conventions
 
