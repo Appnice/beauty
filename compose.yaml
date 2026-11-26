@@ -36,7 +36,8 @@ services:
       SMS_ECHO: ${SMS_ECHO:-off}
       SMS_MONTHLY_LIMIT: ${SMS_MONTHLY_LIMIT:-300}
       SEED_DEMO: ${SEED_DEMO:-off}
-      OPERATOR_NAME: ${OPERATOR_NAME:-operator tego serwera}
+      OPERATOR_NAME: ${OPERATOR_NAME:-}
+      DEFAULT_LANG: ${DEFAULT_LANG:-pl}
       JOBS: 'on'
     healthcheck:
       test:

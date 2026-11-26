@@ -4,6 +4,7 @@
   import { page } from '$app/state';
   import { onMount } from 'svelte';
   import { api } from '$lib/api';
+  import { i18n } from '$lib/i18n';
   import { clear, load, save, w } from '$lib/signup/state.svelte';
   import StepMain from '$lib/signup/StepMain.svelte';
   import StepKod from '$lib/signup/StepKod.svelte';
@@ -12,6 +13,8 @@
   import StepZespol from '$lib/signup/StepZespol.svelte';
   import StepGodziny from '$lib/signup/StepGodziny.svelte';
   import StepGotowe from '$lib/signup/StepGotowe.svelte';
+
+  const L = $derived(i18n(page.data.lang));
 
   load();
   let st = $state<{ open: boolean; needsCode: boolean; full: boolean; approval: boolean } | null>(null);
@@ -49,15 +52,15 @@
 </script>
 
 <svelte:head>
-  <title>Załóż salon</title>
+  <title>{L.t.signup.title}</title>
   <meta name="robots" content="noindex" />
 </svelte:head>
 
 {#if st && !st.open}
   <main class="wiz">
-    <h1 style="margin-top: 40px">Zakładanie salonów jest zamknięte</h1>
+    <h1 style="margin-top: 40px">{L.t.signup.closed}</h1>
     <div class="grow"></div>
-    <a class="btn" href="/login">Zaloguj się</a>
+    <a class="btn" href="/login">{L.t.signup.login}</a>
   </main>
 {:else if st}
   {#if step === 1}

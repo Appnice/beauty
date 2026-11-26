@@ -1,9 +1,11 @@
 <script lang="ts">
   // Step 6 (Godziny.dc.html): opening hours; the button sends the salon for approval and creates it.
+  import { page } from '$app/state';
   import { api } from '$lib/api';
+  import { i18n } from '$lib/i18n';
   import HoursRow from '$lib/ui/HoursRow.svelte';
   import StepHeader from '$lib/ui/StepHeader.svelte';
-  import { w } from './state.svelte';
+  import { serviceName, w } from './state.svelte';
 
   let {
     done,
@@ -11,6 +13,8 @@
     goto,
     approval
   }: { done: () => void; back: () => void; goto: (step: number) => void; approval: boolean } = $props();
+  const L = $derived(i18n(page.data.lang));
+  const t = $derived(L.t.signup);
   let error = $state('');
   let busy = $state(false);
 
@@ -20,9 +24,9 @@
     const openingHours = w.hours
       .filter((d) => d.open)
       .map((d) => ({ weekday: d.weekday, opens: d.opens, closes: d.closes }));
-    if (openingHours.length === 0) return void (error = 'Salon musi być otwarty co najmniej jeden dzień.');
+    if (openingHours.length === 0) return void (error = t.hours.errors.noDay);
     if (w.password.length < 8) {
-      error = 'Wpisz hasło jeszcze raz.';
+      error = t.hours.errors.password;
       return goto(1);
     }
     busy = true;
@@ -39,7 +43,10 @@
       link: w.link,
       about: w.about,
       team: w.team,
-      services: w.services.filter((s) => s.on).map((s) => ({ name: s.name, durationMin: s.min })),
+      // proposed services are saved under their names in the page language
+      services: w.services
+        .filter((s) => s.on)
+        .map((s) => ({ name: serviceName(s, t.services.presets), durationMin: s.min })),
       openingHours
     });
     busy = false;
@@ -55,8 +62,8 @@
 
 <form class="wiz" onsubmit={submit} novalidate>
   <StepHeader step={6} onback={back} />
-  <h1 style="margin: 32px 0 6px">Kiedy otwarte?</h1>
-  <p class="lead">Stuknij godzinę, żeby zmienić.</p>
+  <h1 style="margin: 32px 0 6px">{t.hours.title}</h1>
+  <p class="lead">{t.hours.lead}</p>
 
   <div class="days">
     {#each w.hours as d (d.weekday)}
@@ -66,7 +73,7 @@
 
   <div class="grow"></div>
   {#if error}<p class="error msg" role="alert">{error}</p>{/if}
-  <button class="btn" disabled={busy}>{approval ? 'Wyślij do akceptacji' : 'Gotowe'}</button>
+  <button class="btn" disabled={busy}>{approval ? t.hours.send : t.hours.done}</button>
 </form>
 
 <style>

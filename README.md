@@ -7,7 +7,7 @@
 <h3 align="center">Salon booking without the paper notebook. Free. No commission. Your own server if you want.</h3>
 
 <p align="center">
-  <a href="https://vote2build.com/p/1"><img alt="vote2build #001" src="https://img.shields.io/badge/vote2build-%23001-ffd43b?labelColor=141413"></a>
+  <a href="https://vote2build.com/en/p/1"><img alt="vote2build #001" src="https://img.shields.io/badge/vote2build-%23001-ffd43b?labelColor=141413"></a>
   <img alt="Licence: AGPL-3.0" src="https://img.shields.io/badge/licence-AGPL--3.0-8a3a5a">
   <img alt="Commission: 0%" src="https://img.shields.io/badge/commission-0%25-2f6b45">
   <img alt="Self-hosted" src="https://img.shields.io/badge/self--hosted-yes-2f6b45">
@@ -18,20 +18,20 @@
 </p>
 
 <p align="center">
-  <a href="https://beauty.vote2build.com"><b>Live</b></a> ·
-  <a href="https://beauty.vote2build.com/demo"><b>Demo salon</b></a> ·
-  <a href="https://vote2build.com/p/1"><b>Project history</b></a> ·
+  <a href="https://beauty.vote2build.com/en"><b>Live</b></a> ·
+  <a href="https://beauty.vote2build.com/demo?lang=en"><b>Demo salon</b></a> ·
+  <a href="https://vote2build.com/en/p/1"><b>Project history</b></a> ·
   <a href="README.pl.md"><b>Polski</b></a>
 </p>
 
 <p align="center">
-  <a href="https://beauty.vote2build.com"><img src="docs/screens/landing-1440.png" alt="beauty: a reception calendar and online booking" width="860"></a>
+  <a href="https://beauty.vote2build.com/en"><img src="docs/screens/en/landing-1440.png" alt="beauty: a reception calendar and online booking" width="860"></a>
 </p>
 
 > [!NOTE]
-> **Built through [vote2build](https://vote2build.com).** Small businesses describe a problem in their own
+> **Built through [vote2build](https://vote2build.com/en).** Small businesses describe a problem in their own
 > words, people vote, and an idea that reaches the threshold with a pilot company gets built and given away
-> as open source. beauty is project **#001**: [its page and build history](https://vote2build.com/p/1).
+> as open source. beauty is project **#001**: [its page and build history](https://vote2build.com/en/p/1).
 > Voted in. Built free.
 
 <p align="center"><b>Run it for one salon</b> · Docker with Compose · no Node.js needed</p>
@@ -49,20 +49,21 @@ docker compose up -d      # then open http://localhost:8080 and click "Załóż 
 - **Free and yours.** No commission, no subscription for the software. One app and one database.
 
 <p align="center">
-  <img src="docs/screens/Kalendarz-1440.png" alt="Day calendar: one column per stylist" width="860">
+  <img src="docs/screens/en/Kalendarz-1440.png" alt="Day calendar: one column per stylist" width="860">
 </p>
 
 <p align="center">
-  <img src="docs/screens/Klient-1-usluga-390.png" alt="Client: pick a service" width="250">
+  <img src="docs/screens/en/Klient-1-usluga-390.png" alt="Client: pick a service" width="250">
   &nbsp;&nbsp;
-  <img src="docs/screens/Klient-3-termin-390.png" alt="Client: pick a time" width="250">
+  <img src="docs/screens/en/Klient-3-termin-390.png" alt="Client: pick a time" width="250">
   &nbsp;&nbsp;
-  <img src="docs/screens/Klient-6-gotowe-390.png" alt="Client: visit confirmed" width="250">
+  <img src="docs/screens/en/Klient-6-gotowe-390.png" alt="Client: visit confirmed" width="250">
 </p>
 
 > [!TIP]
-> Try it without installing anything: open the [demo salon](https://beauty.vote2build.com/demo) and book a
-> visit. In the demo the SMS code is shown on the screen. The interface is in Polish.
+> Try it without installing anything: open the [demo salon](https://beauty.vote2build.com/demo?lang=en) and
+> book a visit. In the demo the SMS code is shown on the screen. The app speaks Polish and English: switch with
+> PL / EN on the page, or open `/en`.
 
 ## What you get
 
@@ -75,6 +76,7 @@ docker compose up -d      # then open http://localhost:8080 and click "Załóż 
 | **Visit page** | From the SMS link: details, status, cancel until 2 hours before, book again, add to the phone's calendar. |
 | **Stylist's phone** | Each person sees only their own day and can add a break. |
 | **Waiting list** | Online bookings that need a yes from the salon wait in one place. |
+| **Two languages** | Polish and English: screens, dates, error messages and SMS. Each visitor picks with PL / EN; a salon created in English sends English SMS. |
 | **Privacy (GDPR)** | A privacy page per salon, consent on the form, erase a client from the visit card. |
 
 <details>
@@ -83,17 +85,17 @@ docker compose up -d      # then open http://localhost:8080 and click "Załóż 
 <br>
 
 <p align="center">
-  <img src="docs/screens/Tydzien.png" alt="Week view" width="420">
-  <img src="docs/screens/NowaWizyta.png" alt="New visit from the reception" width="420">
+  <img src="docs/screens/en/Tydzien.png" alt="Week view" width="420">
+  <img src="docs/screens/en/NowaWizyta.png" alt="New visit from the reception" width="420">
 </p>
 
 <p align="center">
-  <img src="docs/screens/Stylistka.png" alt="Stylist's day on a phone" width="250">
+  <img src="docs/screens/en/Stylistka.png" alt="Stylist's day on a phone" width="250">
   &nbsp;&nbsp;
-  <img src="docs/screens/Klient-7-wizyta-390.png" alt="Visit page from the SMS link" width="250">
+  <img src="docs/screens/en/Klient-7-wizyta-390.png" alt="Visit page from the SMS link" width="250">
 </p>
 
-Every screen: [docs/screens](docs/screens).
+Every screen: [docs/screens/en](docs/screens/en) (English) and [docs/screens](docs/screens) (Polish).
 
 </details>
 
@@ -107,7 +109,7 @@ booking and SMS to clients start only after the platform admin accepts the salon
 cannot log in and its data is removed after 30 days.
 
 <p align="center">
-  <img src="docs/screens/Admin.png" alt="Admin: salons waiting for approval" width="760">
+  <img src="docs/screens/en/Admin.png" alt="Admin: salons waiting for approval" width="760">
 </p>
 
 - One salon per phone number.
@@ -130,6 +132,8 @@ A one-salon install (`SINGLE_SALON=on`, the default in `compose.yaml`) has no ap
 - The double-booking guard is an exclusion constraint on the person and the time range.
 - SMS goes through an adapter. The default `log` provider sends nothing: the message is stored and logged.
   A real gateway: SMSAPI.pl (`SMS_PROVIDER=smsapi` and `SMSAPI_TOKEN`).
+- Texts live in `src/lib/i18n/pl` and `src/lib/i18n/en`; the English files are typed against the Polish ones, so a
+  missing text is a type error. Adding a language is one more folder.
 - Messages are plain GSM text of at most 160 characters; long names are shortened and the link stays whole.
 - The app and the database each run within a 256 MB limit. Measured peak of the app: about 114 MiB
   ([docs/deploy.md](docs/deploy.md)).
@@ -180,7 +184,7 @@ Log in to the demo salon with the phone `500 000 001` and the password from `DEM
 | `make dev` | development server on port 8150 |
 | `make build` | production build in `build/` (`node build`) |
 | `make check` | type check, lint and all tests against the local database |
-| `make e2e` | browser tests (headless Playwright) on a fresh `beauty_e2e` database; writes `docs/screens/` |
+| `make e2e` | browser tests (headless Playwright) on a fresh `beauty_e2e` database; writes `docs/screens/` and `docs/screens/en/` |
 | `make e2e-chain` | the whole chain in one test: sign-up, approval, booking, cancel |
 | `make test`, `make lint`, `make typecheck`, `make format` | the single steps |
 | `make deploy-local` | the production image on this machine behind Caddy, smoke tests, memory check, cleanup |
@@ -209,12 +213,13 @@ Self-hosting: `.env.example` and `compose.yaml`. Developers can keep their own s
 | `ADMIN_PHONE`, `ADMIN_NOTIFY_URL` | where the notice about a new salon goes: SMS and/or a POST (e.g. an ntfy topic) |
 | `SMS_MONTHLY_LIMIT` | SMS allowance per salon per month; after it, client codes are refused |
 | `OPERATOR_NAME` | who runs the instance (the data processor named on the privacy page) |
+| `DEFAULT_LANG` | `pl` or `en`: the language of the screens until a visitor picks one (default `pl`) |
 
 </details>
 
 ## Have a problem like this in your business?
 
-beauty exists because a salon had one. File yours at [vote2build.com](https://vote2build.com): if it collects
+beauty exists because a salon had one. File yours at [vote2build.com](https://vote2build.com/en): if it collects
 enough votes and one company ready to use it first, it gets built and given away like this one.
 
 ## Licence
@@ -223,7 +228,7 @@ GNU Affero General Public License v3.0 (AGPL-3.0-only); the full text is in [LIC
 change and host it for free. If you offer a changed version to others over a network, share its code too.
 
 <p align="center">
-  <a href="https://vote2build.com/p/1"><img alt="V2B" src="https://img.shields.io/badge/V2B-Voted_in._Built_free.-ffd43b?labelColor=141413"></a>
+  <a href="https://vote2build.com/en/p/1"><img alt="V2B" src="https://img.shields.io/badge/V2B-Voted_in._Built_free.-ffd43b?labelColor=141413"></a>
 </p>
 
 <p align="center">© 2026 Appnice</p>

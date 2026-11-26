@@ -1,12 +1,16 @@
 <script lang="ts">
   // Step 2 (Kod.dc.html): the 6-digit SMS code. With SMS_ECHO=on the server returns the code: it fills the boxes.
   import { onDestroy } from 'svelte';
+  import { page } from '$app/state';
   import { api } from '$lib/api';
+  import { i18n } from '$lib/i18n';
   import CodeInput from '$lib/ui/CodeInput.svelte';
   import StepHeader from '$lib/ui/StepHeader.svelte';
   import { w } from './state.svelte';
 
   let { next, back }: { next: () => void; back: () => void } = $props();
+  const L = $derived(i18n(page.data.lang));
+  const t = $derived(L.t.signup);
   let value = $state(w.code);
   let error = $state('');
   let busy = $state(false);
@@ -25,7 +29,7 @@
 
   async function submit(e?: SubmitEvent) {
     e?.preventDefault();
-    if (value.length !== 6) return void (error = 'Wpisz 6 cyfr.');
+    if (value.length !== 6) return void (error = t.code.errors.digits);
     busy = true;
     const r = await api<{ phoneToken: string }>('POST', '/api/signup/verify', {
       phone: w.phone,
@@ -40,19 +44,19 @@
 
 <form class="wiz" onsubmit={submit} novalidate>
   <StepHeader step={2} onback={back} />
-  <h1 style="margin: 40px 0 8px">Wpisz kod z SMS</h1>
-  <p class="lead">Wysłaliśmy go na {w.phone}</p>
+  <h1 style="margin: 40px 0 8px">{t.code.title}</h1>
+  <p class="lead">{t.code.sentTo(w.phone)}</p>
   <div style="margin-top: 36px"><CodeInput bind:value /></div>
   <p class="again">
     {#if left > 0}
-      Nie doszedł? Wyślij ponownie za 0:{String(left).padStart(2, '0')}
+      {t.code.resendIn(left)}
     {:else}
-      Nie doszedł? <button type="button" class="linkish" onclick={resend}>Wyślij ponownie</button>
+      {t.code.notArrived} <button type="button" class="linkish" onclick={resend}>{t.code.resend}</button>
     {/if}
   </p>
   <div class="grow"></div>
   {#if error}<p class="error msg" role="alert">{error}</p>{/if}
-  <button class="btn" disabled={busy}>Dalej</button>
+  <button class="btn" disabled={busy}>{t.next}</button>
 </form>
 
 <style>

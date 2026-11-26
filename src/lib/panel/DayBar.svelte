@@ -1,5 +1,7 @@
 <script lang="ts">
   // The bar over the calendar: arrows, the day, "Dziś", Dzień / Tydzień, "+ Wizyta".
+  import { page } from '$app/state';
+  import { i18n } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
   let {
     title,
@@ -10,8 +12,8 @@
     dayHref,
     weekHref,
     onadd,
-    prevLabel = 'Poprzedni dzień',
-    nextLabel = 'Następny dzień'
+    prevLabel,
+    nextLabel
   }: {
     title: string;
     isToday: boolean;
@@ -24,27 +26,28 @@
     prevLabel?: string;
     nextLabel?: string;
   } = $props();
+  const t = $derived(i18n(page.data.lang).t.panel.bar);
 </script>
 
 <div class="bar">
   <div class="nav">
-    <button class="icon-btn boxed" aria-label={prevLabel} onclick={prev}
+    <button class="icon-btn boxed" aria-label={prevLabel ?? t.prevDay} onclick={prev}
       ><Icon name="back" size={20} /></button
     >
-    <button class="icon-btn boxed" aria-label={nextLabel} onclick={next}
+    <button class="icon-btn boxed" aria-label={nextLabel ?? t.nextDay} onclick={next}
       ><Icon name="forward" size={20} /></button
     >
     <h1>{title}</h1>
-    {#if isToday}<span class="today">Dziś</span>{/if}
+    {#if isToday}<span class="today">{t.today}</span>{/if}
   </div>
   <div class="grow"></div>
   <div class="tools">
-    <div role="group" aria-label="Widok" class="seg">
-      <a href={dayHref} class:on={view === 'day'}>Dzień</a>
-      <a href={weekHref} class:on={view === 'week'}>Tydzień</a>
+    <div role="group" aria-label={t.view} class="seg">
+      <a href={dayHref} class:on={view === 'day'}>{t.day}</a>
+      <a href={weekHref} class:on={view === 'week'}>{t.week}</a>
     </div>
     {#if onadd}
-      <button class="add" onclick={onadd}><Icon name="plus" size={18} stroke={2.4} /> Wizyta</button>
+      <button class="add" onclick={onadd}><Icon name="plus" size={18} stroke={2.4} /> {t.add}</button>
     {/if}
   </div>
 </div>

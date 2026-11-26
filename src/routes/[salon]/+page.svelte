@@ -4,6 +4,7 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import { onMount } from 'svelte';
+  import { i18n } from '$lib/i18n';
   import { allowed, b, load, save, STEPS, type Step } from '$lib/booking/state.svelte';
   import ServiceStep from '$lib/booking/ServiceStep.svelte';
   import PersonStep from '$lib/booking/PersonStep.svelte';
@@ -13,6 +14,7 @@
   import DoneStep from '$lib/booking/DoneStep.svelte';
 
   let { data } = $props();
+  const L = $derived(i18n(page.data.lang));
   const slug = $derived(data.salon.slug);
   let ready = $state(false);
 
@@ -65,7 +67,7 @@
 {#if !data.online}
   <main class="wiz">
     <h1 style="margin: 40px 0 8px">{data.salon.name}</h1>
-    <p class="lead">Zapisy online wkrótce</p>
+    <p class="lead">{L.t.booking.soon}</p>
   </main>
 {:else if step === 'usluga' || !service}
   <ServiceStep salon={data.salon} services={data.services} next={() => to('osoba')} />
@@ -79,7 +81,7 @@
   <DetailsStep
     {slug}
     {service}
-    staffName={person?.name ?? 'Obojętnie'}
+    staffName={person?.name ?? L.t.booking.person.any}
     next={() => to('kod')}
     {done}
     {taken}

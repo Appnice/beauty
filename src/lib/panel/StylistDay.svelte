@@ -1,9 +1,11 @@
 <script lang="ts">
   // The stylist on her phone: my day today and tomorrow, add or remove my own block. Nothing else.
   import { goto } from '$app/navigation';
+  import { page } from '$app/state';
   import { api } from '$lib/api';
   import { personColor } from '$lib/colors';
-  import { addDays, hm, instant, longDate, today } from '$lib/pl';
+  import { i18n } from '$lib/i18n';
+  import { addDays, hm, instant, today } from '$lib/pl';
   import Icon from '$lib/ui/Icon.svelte';
   import Sheet from '$lib/ui/Sheet.svelte';
   import { showToast } from '$lib/ui/toast.svelte.ts';
@@ -11,10 +13,13 @@
   import { BLOCK_KINDS, type Calendar } from './types';
 
   let { slug, name }: { slug: string; name: string } = $props();
+  const L = $derived(i18n(page.data.lang));
+  const t = $derived(L.t.panel.stylist);
   let which = $state<0 | 1>(0);
   const day = $derived(addDays(today(), which));
   let cal = $state<Calendar | null>(null);
   let adding = $state(false);
+  /** The stored reason: one of `BLOCK_KINDS` (Polish in the data), shown through `block.kind`. */
   let kind = $state<string>('Przerwa');
   let from = $state(12 * 60);
   let to = $state(13 * 60);
@@ -39,7 +44,7 @@
             id: v.id,
             a: minOn(v.start, day),
             z: minOn(v.end, day),
-            title: v.clientName,
+            title: L.t.panel.client(v.clientName),
             sub: v.serviceName,
             pending: v.status === 'oczekuje'
           })),
@@ -48,7 +53,7 @@
             id: b.id,
             a: Math.max(minOn(b.start, day), 0),
             z: Math.min(minOn(b.end, day), 24 * 60),
-            title: b.reason || 'Blokada',
+            title: L.t.panel.block.kind(b.reason) || L.t.panel.block.fallback,
             sub: '',
             pending: false
           }))
@@ -59,7 +64,7 @@
   async function addBlock(e: SubmitEvent) {
     e.preventDefault();
     if (!me) return;
-    if (to <= from) return showToast('Koniec musi być po początku.', 'error');
+    if (to <= from) return showToast(t.endAfterStart, 'error');
     const r = await api('POST', `/api/${slug}/blocks`, {
       staffId: me.id,
       start: instant(day, from),
@@ -68,14 +73,14 @@
     });
     if (!r.ok) return showToast(r.error, 'error');
     adding = false;
-    showToast(`Dodano: ${kind}`);
+    showToast(t.added(L.t.panel.block.kind(kind)));
     load();
   }
 
   async function removeBlock(id: string) {
     const r = await api('DELETE', `/api/${slug}/blocks/${id}`);
     if (!r.ok) return showToast(r.error, 'error');
-    showToast('Usunięto');
+    showToast(t.removed);
     load();
   }
 
@@ -88,15 +93,13 @@
 <main class="wiz me">
   <div class="top">
     <span class="hello">{name}</span>
-    <button class="icon-btn" aria-label="Wyloguj się" onclick={logout}
-      ><Icon name="logout" size={22} /></button
-    >
+    <button class="icon-btn" aria-label={t.logout} onclick={logout}><Icon name="logout" size={22} /></button>
   </div>
-  <div role="group" aria-label="Dzień" class="seg">
-    <button class:on={which === 0} onclick={() => (which = 0)}>Dziś</button>
-    <button class:on={which === 1} onclick={() => (which = 1)}>Jutro</button>
+  <div role="group" aria-label={t.dayGroup} class="seg">
+    <button class:on={which === 0} onclick={() => (which = 0)}>{t.today}</button>
+    <button class:on={which === 1} onclick={() => (which = 1)}>{t.tomorrow}</button>
   </div>
-  <h1>{longDate(day)}</h1>
+  <h1>{L.longDate(day)}</h1>
 
   <div class="list" data-testid="my-day">
     {#each items as it (it.id)}
@@ -110,7 +113,7 @@
         >
           <span class="t">{timeRange(it.a, it.z)}</span>
           <span class="title">{it.title}</span>
-          <span class="sub">{it.pending ? 'Czeka na potwierdzenie' : it.sub}</span>
+          <span class="sub">{it.pending ? t.waiting : it.sub}</span>
         </div>
       {:else}
         <div class="item block" data-testid="my-block">
@@ -120,7 +123,7 @@
           </span>
           <button
             class="icon-btn"
-            aria-label="Usuń: {it.title} {hm(it.a)}"
+            aria-label={t.remove(it.title, hm(it.a))}
             onclick={() => removeBlock(it.id)}
           >
             <Icon name="close" size={20} />
@@ -128,20 +131,20 @@
         </div>
       {/if}
     {:else}
-      {#if cal}<p class="muted empty">Brak wizyt.</p>{/if}
+      {#if cal}<p class="muted empty">{t.empty}</p>{/if}
     {/each}
   </div>
 
   <div class="grow"></div>
   <button class="btn" onclick={() => (adding = true)}
-    ><Icon name="plus" size={20} stroke={2.4} /> Przerwa</button
+    ><Icon name="plus" size={20} stroke={2.4} /> {t.addBreak}</button
   >
 </main>
 
 {#if adding}
-  <Sheet title="Przerwa" onclose={() => (adding = false)}>
+  <Sheet title={t.sheetTitle} onclose={() => (adding = false)}>
     <form class="form" onsubmit={addBlock} novalidate>
-      <div class="chips" role="radiogroup" aria-label="Powód">
+      <div class="chips" role="radiogroup" aria-label={t.reason}>
         {#each BLOCK_KINDS as k (k)}
           <button
             type="button"
@@ -149,24 +152,24 @@
             aria-checked={kind === k}
             class="chip"
             class:on={kind === k}
-            onclick={() => (kind = k)}>{k}</button
+            onclick={() => (kind = k)}>{L.t.panel.block.kind(k)}</button
           >
         {/each}
       </div>
       <div class="two">
         <label class="field"
-          >Od<select class="input" bind:value={from}
+          >{t.from}<select class="input" bind:value={from}
             >{#each TIMES as t (t)}<option value={t}>{hm(t)}</option>{/each}</select
           ></label
         >
         <label class="field"
-          >Do<select class="input" bind:value={to}
+          >{t.to}<select class="input" bind:value={to}
             >{#each TIMES as t (t)}<option value={t}>{hm(t)}</option>{/each}</select
           ></label
         >
       </div>
       <div class="grow"></div>
-      <button class="btn">Zapisz · {longDate(day)}</button>
+      <button class="btn">{t.save} · {L.longDate(day)}</button>
     </form>
   </Sheet>
 {/if}

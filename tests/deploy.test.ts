@@ -32,12 +32,29 @@ describe('security headers', () => {
   });
 
   it('the handle hook adds them and keeps a header the route set', async () => {
-    const res = await handle({
-      event: {} as never,
-      resolve: async () => new Response('x', { headers: { 'referrer-policy': 'no-referrer' } })
+    const set: Record<string, string> = {};
+    const event = (url: string, cookie?: string) => ({
+      url: new URL(url),
+      cookies: { get: () => cookie, set: (k: string, v: string) => void (set[k] = v) },
+      locals: {} as { lang?: string }
     });
+    const resolve = async () => new Response('x', { headers: { 'referrer-policy': 'no-referrer' } });
+    const plain = event('http://localhost/');
+    const res = await handle({ event: plain as never, resolve });
     expect(res.headers.get('x-content-type-options')).toBe('nosniff');
     expect(res.headers.get('referrer-policy')).toBe('no-referrer');
+    // the language: Polish by default, the cookie, and ?lang= (which also stores the cookie)
+    expect(plain.locals.lang).toBe('pl');
+    const cookie = event('http://localhost/demo', 'en');
+    await handle({ event: cookie as never, resolve });
+    expect(cookie.locals.lang).toBe('en');
+    const asked = event('http://localhost/demo?lang=en');
+    await handle({ event: asked as never, resolve });
+    expect(asked.locals.lang).toBe('en');
+    expect(set.lang).toBe('en');
+    const bad = event('http://localhost/demo?lang=de', 'xx');
+    await handle({ event: bad as never, resolve });
+    expect(bad.locals.lang).toBe('pl');
   });
 });
 

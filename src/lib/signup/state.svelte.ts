@@ -6,9 +6,12 @@ export const KEY = 'beauty-signup';
 export const STEPS = 6;
 
 export interface WizardService {
+  /** The owner's own service name; empty for a proposed one (see `preset`). */
   name: string;
   min: number;
   on: boolean;
+  /** Index of a proposed service: its name comes from the dictionary (`signup.services.presets`). */
+  preset?: number;
 }
 export interface WizardDay {
   weekday: number;
@@ -17,15 +20,13 @@ export interface WizardDay {
   closes: string;
 }
 
-export const PRESET_SERVICES: [string, number][] = [
-  ['Strzyżenie damskie', 60],
-  ['Strzyżenie męskie', 30],
-  ['Koloryzacja', 120],
-  ['Modelowanie', 45],
-  ['Manicure hybrydowy', 60],
-  ['Pedicure', 60],
-  ['Brwi i rzęsy', 30]
-];
+/** Minutes of the proposed services, in the order of `signup.services.presets` in the dictionaries. */
+export const PRESET_MINUTES = [60, 30, 120, 45, 60, 60, 30];
+
+/** The name shown and saved: a proposed service in the page language, the owner's own as typed. */
+export function serviceName(s: WizardService, presets: string[]): string {
+  return s.preset === undefined ? s.name : (presets[s.preset] ?? s.name);
+}
 
 function fresh() {
   return {
@@ -44,7 +45,7 @@ function fresh() {
     teamSize: '',
     link: '',
     about: '',
-    services: PRESET_SERVICES.map(([name, min], i) => ({ name, min, on: i < 4 })) as WizardService[],
+    services: PRESET_MINUTES.map((min, i) => ({ name: '', min, on: i < 4, preset: i })) as WizardService[],
     team: [] as { name: string }[],
     hours: [1, 2, 3, 4, 5, 6, 7].map((weekday) => ({
       weekday,
@@ -88,11 +89,11 @@ export function clear(): void {
   }
 }
 
-/** "Studio Ola" -> "Ola": the owner's first calendar column. */
-export function ownerGuess(salonName: string): string {
+/** "Studio Ola" -> "Ola": the owner's first calendar column; `me` ("Ja" / "Me") when the name gives none. */
+export function ownerGuess(salonName: string, me: string): string {
   const words = salonName.trim().split(/\s+/);
   const last = words[words.length - 1] ?? '';
-  return words.length >= 2 && /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,20}$/.test(last) ? last : 'Ja';
+  return words.length >= 2 && /^[A-ZĄĆĘŁŃÓŚŹŻ][a-ząćęłńóśźż]{1,20}$/.test(last) ? last : me;
 }
 
 /** Same rule as the server: an address (with or without https://) or an @handle; empty is fine. */

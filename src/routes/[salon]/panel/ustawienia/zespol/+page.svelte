@@ -1,7 +1,9 @@
 <script lang="ts">
   // Zespół: the people (calendar columns). Tap a person: name, phone (for her login), colour, services.
   import { onMount } from 'svelte';
+  import { page } from '$app/state';
   import { api } from '$lib/api';
+  import { i18n } from '$lib/i18n';
   import { PALETTE, personColor } from '$lib/colors';
   import { phoneLocal } from '$lib/pl';
   import SubHeader from '$lib/panel/SubHeader.svelte';
@@ -14,6 +16,7 @@
   import { today } from '$lib/pl';
 
   let { data } = $props();
+  const L = $derived(i18n(page.data.lang));
   const slug = $derived(data.salon.slug);
   let cal = $state<Calendar | null>(null);
   let name = $state('');
@@ -71,7 +74,7 @@
     );
     if (!s.ok) return showToast(s.error, 'error');
     edit = null;
-    showToast('Zapisano');
+    showToast(L.t.settings.team.saved);
     load();
   }
 
@@ -80,41 +83,50 @@
     const r = await api('PATCH', `/api/${slug}/staff/${edit.p.id}`, { active: false });
     if (!r.ok) return showToast(r.error, 'error');
     edit = null;
-    showToast('Usunięto z zespołu');
+    showToast(L.t.settings.team.removed);
     load();
   }
 </script>
 
 <main class="page">
-  <SubHeader {slug} title="Zespół" />
+  <SubHeader {slug} title={L.t.settings.team.title} />
   <div class="rows">
     {#each cal?.staff ?? [] as p, i (p.id)}
       {@const c = personColor(p.color, i)}
       <button class="rowbox person" onclick={() => open(p)} data-testid="person-row">
         <Avatar name={p.name} bg={c.bg} ink={c.avatarInk} size={40} />
         <span class="pname">{p.name}</span>
-        <span class="muted pphone">{p.phone ? phoneLocal(p.phone) : 'bez telefonu'}</span>
+        <span class="muted pphone">{p.phone ? phoneLocal(p.phone) : L.t.settings.team.noPhone}</span>
         <Icon name="forward" size={20} color="#9A918A" />
       </button>
     {/each}
     <form class="rowbox new" onsubmit={add}>
-      <input class="plain" aria-label="Imię" placeholder="Imię" bind:value={name} />
-      <button class="soft-btn">Dodaj</button>
+      <input
+        class="plain"
+        aria-label={L.t.settings.team.name}
+        placeholder={L.t.settings.team.name}
+        bind:value={name}
+      />
+      <button class="soft-btn">{L.t.settings.team.add}</button>
     </form>
   </div>
-  <a class="more" href="/{slug}/panel/ustawienia/blokady"><Icon name="pause" size={20} /> Urlopy i przerwy</a>
+  <a class="more" href="/{slug}/panel/ustawienia/blokady"
+    ><Icon name="pause" size={20} /> {L.t.settings.team.timeOff}</a
+  >
 </main>
 
 {#if edit && cal}
   <Sheet title={edit.p.name} onclose={() => (edit = null)}>
     <form class="form" onsubmit={save} novalidate>
       <label class="field" style="margin-top: 14px">
-        Imię
+        {L.t.settings.team.name}
         <input class="input" bind:value={edit.name} />
       </label>
-      <div style="margin-top: 18px"><PhoneInput bind:value={edit.phone} label="Telefon" /></div>
-      <p class="label">Kolor</p>
-      <div class="chips" role="radiogroup" aria-label="Kolor">
+      <div style="margin-top: 18px">
+        <PhoneInput bind:value={edit.phone} label={L.t.settings.team.phone} />
+      </div>
+      <p class="label">{L.t.settings.team.colour}</p>
+      <div class="chips" role="radiogroup" aria-label={L.t.settings.team.colour}>
         {#each PALETTE as c (c.key)}
           <button
             type="button"
@@ -129,7 +141,7 @@
           ></button>
         {/each}
       </div>
-      <p class="label">Usługi</p>
+      <p class="label">{L.t.settings.team.services}</p>
       <div class="chips">
         {#each cal.services as s (s.id)}
           {@const on = edit.services.includes(s.id)}
@@ -145,10 +157,10 @@
         {/each}
       </div>
       <div class="grow"></div>
-      <button class="btn">Zapisz</button>
+      <button class="btn">{L.t.settings.team.save}</button>
       {#if edit.p.id !== data.me.staffId}
         <button type="button" class="btn secondary" style="margin-top: 10px" onclick={remove}
-          >Usuń z zespołu</button
+          >{L.t.settings.team.remove}</button
         >
       {/if}
     </form>

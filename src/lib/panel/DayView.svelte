@@ -3,7 +3,8 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import { api } from '$lib/api';
-  import { addDays, instant, longDate, today, zoned } from '$lib/pl';
+  import { i18n } from '$lib/i18n';
+  import { addDays, instant, today, zoned } from '$lib/pl';
   import { showToast } from '$lib/ui/toast.svelte.ts';
   import DayBar from './DayBar.svelte';
   import DayGrid from './DayGrid.svelte';
@@ -14,6 +15,7 @@
   import type { Calendar, PVisit } from './types';
 
   let { slug }: { slug: string } = $props();
+  const L = $derived(i18n(page.data.lang));
   const day = $derived(page.url.searchParams.get('d') ?? today());
   let cal = $state<Calendar | null>(null);
   let now = $state(Date.now());
@@ -74,7 +76,7 @@
 
 <main class="day">
   <DayBar
-    title={longDate(day)}
+    title={L.longDate(day)}
     {isToday}
     view="day"
     prev={() => go(addDays(day, -1))}

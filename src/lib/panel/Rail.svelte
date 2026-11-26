@@ -1,11 +1,14 @@
 <script lang="ts">
   // Left rail (Kalendarz.dc.html): Kalendarz, Czekają with the count badge, Ustawienia. A bottom bar on a phone.
+  import { page } from '$app/state';
+  import { i18n } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
   import { panel } from './panel.svelte.ts';
   let { slug, active }: { slug: string; active: 'kalendarz' | 'czekaja' | 'ustawienia' } = $props();
+  const t = $derived(i18n(page.data.lang).t.panel.rail);
 </script>
 
-<nav aria-label="Menu" class="rail">
+<nav aria-label={t.menu} class="rail">
   <span class="logo"><Icon name="calendar" size={20} stroke={2.2} color="#FFFFFF" /></span>
   <a
     href="/{slug}/panel"
@@ -13,7 +16,7 @@
     aria-current={active === 'kalendarz' ? 'page' : undefined}
   >
     <Icon name="calendar" size={22} />
-    Kalendarz
+    {t.calendar}
   </a>
   <a
     href="/{slug}/panel/czekaja"
@@ -21,7 +24,7 @@
     aria-current={active === 'czekaja' ? 'page' : undefined}
   >
     <Icon name="clock" size={22} />
-    Czekają
+    {t.waiting}
     {#if panel.pending > 0}<span class="badge" data-testid="badge">{panel.pending}</span>{/if}
   </a>
   <a
@@ -30,7 +33,7 @@
     aria-current={active === 'ustawienia' ? 'page' : undefined}
   >
     <Icon name="sliders" size={22} />
-    Ustawienia
+    {t.settings}
   </a>
 </nav>
 

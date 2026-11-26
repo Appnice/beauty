@@ -5,7 +5,7 @@ import { appSecret, flag } from './env.ts';
 import { AppError, invalid } from './errors.ts';
 import { sendSms } from './notify.ts';
 import { smsProvider } from './sms/index.ts';
-import { T } from './sms/templates.ts';
+import { texts, type SmsLang } from './sms/templates.ts';
 import { normalizePhone } from './phone.ts';
 import type { Actor } from './policy.ts';
 import type { Salon } from './tenant.ts';
@@ -92,6 +92,7 @@ export async function issueCode(
     insert into sms_code (salon_id, phone, purpose, code_hash, expires_at)
     values (${salon.id}, ${phone}, ${purpose}, ${codeHash(salon.id, phone, purpose, code)},
             now() + make_interval(mins => ${CODE_TTL_MIN}))`;
+  const T = texts(salon.lang);
   const body = purpose === 'staff_login' ? T.kod_logowania(code, salon.name) : T.kod(code, salon.name);
   await sendSms(sql, {
     salonId: salon.id,
@@ -136,7 +137,12 @@ function signupHash(phone: string, code: string): string {
 }
 
 /** Send a sign-up code to the owner's phone. The code is on screen only with SMS_ECHO=on. */
-export async function issueSignupCode(sql: Sql, rawPhone: string, ip = 'unknown'): Promise<IssuedCode> {
+export async function issueSignupCode(
+  sql: Sql,
+  rawPhone: string,
+  ip = 'unknown',
+  lang: SmsLang = 'pl'
+): Promise<IssuedCode> {
   const phone = normalizePhone(rawPhone);
   if (!phone) throw invalid('Podaj poprawny numer telefonu.');
   await rateLimit(sql, `signup-code:${phone}`, 3, 600);
@@ -148,7 +154,7 @@ export async function issueSignupCode(sql: Sql, rawPhone: string, ip = 'unknown'
   // No salon yet, so no notification row: the SMS counter is per salon.
   const r = await smsProvider().send({
     to: phone,
-    body: T.kod_zalozenia(code)
+    body: texts(lang).kod_zalozenia(code)
   });
   if (r.status === 'failed') throw new AppError('INVALID', 'Nie udało się wysłać SMS. Spróbuj ponownie.');
   return flag('SMS_ECHO') ? { phone, echo: code } : { phone };

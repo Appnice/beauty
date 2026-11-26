@@ -5,7 +5,7 @@ import { env, publicUrl, quiet } from './env.ts';
 import { AppError, notFound } from './errors.ts';
 import { sendSms } from './notify.ts';
 import { normalizePhone } from './phone.ts';
-import { T } from './sms/templates.ts';
+import { T, texts } from './sms/templates.ts';
 import type { Salon, SalonStatus } from './tenant.ts';
 import { systemClock, type Clock } from './time.ts';
 
@@ -137,7 +137,7 @@ export async function accept(sql: Sql, id: string, ip: string | null = null, clo
       salonId: s.id,
       type: 'salon_przyjety',
       to: s.phone,
-      body: T.salon_przyjety(`${publicUrl()}/${s.slug}`)
+      body: texts(s.lang).salon_przyjety(`${publicUrl()}/${s.slug}`)
     });
   }
   return s;
@@ -160,7 +160,7 @@ export async function reject(
       salonId: s.id,
       type: 'salon_odrzucony',
       to: s.phone,
-      body: T.salon_odrzucony(s.name, why)
+      body: texts(s.lang).salon_odrzucony(s.name, why)
     });
   }
   return s;

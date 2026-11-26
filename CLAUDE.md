@@ -66,15 +66,17 @@ Ports: dev 8150, tests/manual servers 8151-8159. Docker is shared: only projects
 - Time: DB in UTC (`TimeZone=UTC` on the connection), salon zone `Europe/Warsaw`, built-in `Temporal` (Node 26).
   postgres.js v4 sends params untyped: pass ISO strings with `::timestamptz` casts.
 - Money in grosze (int). Phones in E.164 via `normalizePhone()` (+48 default).
-- All user-facing text is Polish, plain words (wizyta, termin, grafik), correct diacritics. Errors: `AppError(code, pl message)`.
+- Two languages (pl default, en): texts in `src/lib/i18n/{pl,en}/<area>.ts` (`en` typed `typeof pl`); in a component
+  `const L = $derived(i18n(page.data.lang))`, then `L.t.<area>.<key>`, `L.longDate()`, `L.price()`. Language = `lang`
+  cookie (`?lang=en`, `/en`, PL / EN switch), else `DEFAULT_LANG`. Errors: `AppError(code, pl message)` + English in
+  `i18n/errors.ts`. SMS language = `salon.lang` (`texts(lang)`). `tests/e2e/english.spec.ts` writes `docs/screens/en/`.
 - Server code imports with explicit `.ts` extensions, so `node scripts/*.ts` runs it without a build step.
 - Online visits must match a start the engine offers; reception visits only hit the DB guard.
 - Jobs re-read the visit and skip stale work (cancelled, moved, decided: `status` in the job data); queued jobs are
   never cancelled. Reminders (day before, manager after X h) come only from the `sms-sweep` cron
   (`sweepReminders(sql, clock)`, every 10 min, quiet 21:00-8:00); the unique index `notification_once` makes each
   go out once. `sendSms` checks `SMS_MONTHLY_LIMIT`: codes refuse, other SMS get status `limit` and are not sent.
-- SMS texts: no diacritics, max 160 GSM chars, links `${PUBLIC_URL}/w/<token>`. Add a text in `templates.ts` and
-  in `tests/sms-templates.test.ts`.
+- SMS texts: no diacritics, max 160 GSM chars, links `${PUBLIC_URL}/w/<token>`; add to `T`, `T_EN` and the tests.
 - RODO erase (`deleteClient`) keeps the client row and visits (name '', phone null, `erased_at`); views show
   `ERASED_NAME` ("Usunięty klient"); `listClients` skips erased rows.
 - Salon status: `pending` (hosted sign-up) / `active` / `rejected`. `clientSmsAllowed(salon)` gates client SMS
@@ -89,7 +91,6 @@ Ports: dev 8150, tests/manual servers 8151-8159. Docker is shared: only projects
 - adapter-node reports `https:` by default; the cookie `Secure` flag follows `PUBLIC_URL`. Compose sets `ORIGIN`.
 - CSP: script-src is nonce-only. Never add an inline `<script>` or `on*=` attribute in app.html; styles may be inline.
 - The Docker VM on this Mac cannot bind-mount `$TMPDIR`: `docker cp` a file into a container instead.
-- No GitHub Actions, no deploy from here; the main session commits (never `git add -A`).
 - A button inside a `<form>` without `type="button"` submits it: Enter in a field then "clicks" the first one.
 - Design `.dc.html` boxes are content-box (a 64 px row + border = 67 px); the app is border-box.
 - e2e cookies: `PUBLIC_URL=https://...` makes them `Secure`; Chromium still accepts them on http://localhost.

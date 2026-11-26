@@ -1,11 +1,14 @@
 <script lang="ts">
   // Step 4 (Uslugi.dc.html): tick the services; "Dodaj swoją" adds one (60 min, changed later in Ustawienia).
-  import { plural } from '$lib/pl';
+  import { page } from '$app/state';
+  import { i18n } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
   import StepHeader from '$lib/ui/StepHeader.svelte';
-  import { w } from './state.svelte';
+  import { serviceName, w } from './state.svelte';
 
   let { next, back }: { next: () => void; back: () => void } = $props();
+  const L = $derived(i18n(page.data.lang));
+  const t = $derived(L.t.signup);
   let adding = $state(false);
   let own = $state('');
   let error = $state('');
@@ -21,15 +24,15 @@
   function submit(e: SubmitEvent) {
     e.preventDefault();
     if (adding && own.trim()) return add();
-    if (n === 0) return void (error = 'Zaznacz co najmniej jedną usługę.');
+    if (n === 0) return void (error = t.services.errors.none);
     next();
   }
 </script>
 
 <form class="wiz" onsubmit={submit} novalidate>
   <StepHeader step={4} onback={back} />
-  <h1 style="margin: 32px 0 6px">Co robicie?</h1>
-  <p class="lead">Zaznacz. Czas zmienisz później.</p>
+  <h1 style="margin: 32px 0 6px">{t.services.title}</h1>
+  <p class="lead">{t.services.lead}</p>
 
   <div class="list">
     {#each w.services as s, i (i)}
@@ -43,27 +46,27 @@
         <span class="box"
           >{#if s.on}<Icon name="check" size={16} stroke={3} color="#FFFFFF" />{/if}</span
         >
-        <span class="name">{s.name}</span>
+        <span class="name">{serviceName(s, t.services.presets)}</span>
         <span class="min">{s.min} min</span>
       </button>
     {/each}
     {#if adding}
       <div class="row on add-row">
         <!-- svelte-ignore a11y_autofocus -->
-        <input aria-label="Nazwa usługi" placeholder="Nazwa usługi" bind:value={own} autofocus />
-        <button type="button" class="add-btn" onclick={add}>Dodaj</button>
+        <input aria-label={t.services.name} placeholder={t.services.name} bind:value={own} autofocus />
+        <button type="button" class="add-btn" onclick={add}>{t.add}</button>
       </div>
     {:else}
       <button type="button" class="row dashed" onclick={() => (adding = true)}>
         <Icon name="plus" size={22} stroke={2.2} />
-        Dodaj swoją
+        {t.services.addOwn}
       </button>
     {/if}
   </div>
 
   <div class="grow"></div>
   {#if error}<p class="error msg" role="alert">{error}</p>{/if}
-  <button class="btn">Dalej · {n} {plural(n, 'usługa', 'usługi', 'usług')}</button>
+  <button class="btn">{t.services.next(n)}</button>
 </form>
 
 <style>

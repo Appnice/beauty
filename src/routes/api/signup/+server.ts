@@ -50,7 +50,7 @@ export async function POST(event: RequestEvent) {
   try {
     const sql = db();
     const b = await body(event, Schema);
-    const r = await signup(sql, b, clientIp(event));
+    const r = await signup(sql, b, clientIp(event), event.locals.lang);
     // A filled honeypot: answer like a success, store nothing.
     if (!r)
       return json({ salon: { id: null, slug: b.slug, name: b.name, status: 'pending' } }, { status: 201 });

@@ -1,5 +1,7 @@
 <script lang="ts">
   // Step 2: who, or "Obojętnie" (the first free person).
+  import { page } from '$app/state';
+  import { i18n } from '$lib/i18n';
   import { personColor } from '$lib/colors';
   import Avatar from '$lib/ui/Avatar.svelte';
   import Icon from '$lib/ui/Icon.svelte';
@@ -12,6 +14,7 @@
     next,
     back
   }: { service: PublicService; staff: PublicPerson[]; next: () => void; back: () => void } = $props();
+  const L = $derived(i18n(page.data.lang));
   const people = $derived(staff.filter((p) => p.services.includes(service.id)));
 
   function pick(id: string | null) {
@@ -24,12 +27,12 @@
 
 <main class="wiz">
   <StepHeader step={2} total={5} onback={back} />
-  <h1 style="margin: 40px 0 8px">Do kogo?</h1>
+  <h1 style="margin: 40px 0 8px">{L.t.booking.person.title}</h1>
   <p class="lead">{service.name}</p>
   <div class="picks">
     <button type="button" class="pick" onclick={() => pick(null)}>
       <span class="any"><Icon name="team" size={18} /></span>
-      <span class="name">Obojętnie</span>
+      <span class="name">{L.t.booking.person.any}</span>
     </button>
     {#each people as p, i (p.id)}
       {@const c = personColor(p.color, i)}

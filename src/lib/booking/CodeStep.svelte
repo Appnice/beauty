@@ -1,7 +1,9 @@
 <script lang="ts">
   // Step 5: the 6-digit SMS code (Kod.dc.html). The code proves the phone; then the visit is booked.
   import { onDestroy } from 'svelte';
+  import { page } from '$app/state';
   import { api } from '$lib/api';
+  import { i18n } from '$lib/i18n';
   import CodeInput from '$lib/ui/CodeInput.svelte';
   import StepHeader from '$lib/ui/StepHeader.svelte';
   import { sendBooking } from './book';
@@ -14,6 +16,7 @@
     taken,
     back
   }: { slug: string; staffName: string; done: () => void; taken: () => void; back: () => void } = $props();
+  const L = $derived(i18n(page.data.lang));
   let value = $state(b.code);
   let error = $state('');
   let busy = $state(false);
@@ -33,7 +36,7 @@
   async function submit(e?: SubmitEvent) {
     e?.preventDefault();
     error = '';
-    if (value.length !== 6) return void (error = 'Wpisz 6 cyfr.');
+    if (value.length !== 6) return void (error = L.t.booking.code.needDigits);
     busy = true;
     const v = await api<{ phoneToken: string }>('POST', `/api/${slug}/booking/verify`, {
       phone: b.phone,
@@ -56,19 +59,20 @@
 
 <form class="wiz" onsubmit={submit} novalidate>
   <StepHeader step={5} total={5} onback={back} />
-  <h1 style="margin: 40px 0 8px">Wpisz kod z SMS</h1>
-  <p class="lead">Wysłaliśmy go na {b.phone}</p>
+  <h1 style="margin: 40px 0 8px">{L.t.booking.code.title}</h1>
+  <p class="lead">{L.t.booking.code.sentTo(b.phone)}</p>
   <div style="margin-top: 36px"><CodeInput bind:value /></div>
   <p class="again">
     {#if left > 0}
-      Nie doszedł? Wyślij ponownie za {Math.floor(left / 60)}:{String(left % 60).padStart(2, '0')}
+      {L.t.booking.code.resendIn(`${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`)}
     {:else}
-      Nie doszedł? <button type="button" class="linkish" onclick={resend}>Wyślij ponownie</button>
+      {L.t.booking.code.notArrived}
+      <button type="button" class="linkish" onclick={resend}>{L.t.booking.code.resend}</button>
     {/if}
   </p>
   <div class="grow"></div>
   {#if error}<p class="error msg" role="alert">{error}</p>{/if}
-  <button class="btn" disabled={busy}>Zarezerwuj</button>
+  <button class="btn" disabled={busy}>{L.t.booking.code.book}</button>
 </form>
 
 <style>

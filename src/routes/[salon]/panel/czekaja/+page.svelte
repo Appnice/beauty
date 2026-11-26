@@ -1,15 +1,19 @@
 <script lang="ts">
   // "Czekają na Ciebie" (Czekaja.dc.html): online bookings that wait; "Odrzuć" frees the time.
   import { onMount } from 'svelte';
+  import { page } from '$app/state';
   import { api } from '$lib/api';
   import { personColor } from '$lib/colors';
-  import { hm, MONTHS_SHORT, phoneLocal, WEEKDAYS_SHORT, isoWeekday, zoned } from '$lib/pl';
+  import { i18n } from '$lib/i18n';
+  import { hm, phoneLocal, isoWeekday, zoned } from '$lib/pl';
   import { panel, POLL_MS, refreshPending } from '$lib/panel/panel.svelte.ts';
   import Icon from '$lib/ui/Icon.svelte';
   import { showToast } from '$lib/ui/toast.svelte.ts';
 
   let { data } = $props();
   const slug = $derived(data.salon.slug);
+  const L = $derived(i18n(page.data.lang));
+  const t = $derived(L.t.panel.waiting);
   interface V {
     id: string;
     staff_id: string;
@@ -49,14 +53,14 @@
   async function decide(v: V, action: 'confirm' | 'cancel') {
     const r = await api('PATCH', `/api/${slug}/visits/${v.id}`, { action });
     if (!r.ok) return showToast(r.error, 'error');
-    showToast(action === 'confirm' ? `Przyjęta: ${v.client_name}` : `Odrzucona: ${v.client_name}`);
+    showToast(action === 'confirm' ? t.accepted(v.client_name) : t.rejected(v.client_name));
     await load();
     refreshPending();
   }
 </script>
 
 <main class="wait">
-  <h1>Czekają na Ciebie <span class="n">{items.length}</span></h1>
+  <h1>{t.title} <span class="n">{items.length}</span></h1>
 
   <div class="list">
     {#each items as v (v.id)}
@@ -64,9 +68,9 @@
       {@const c = colorOf(v.staff_id)}
       <div class="card" data-testid="pending-card">
         <div class="date">
-          <span class="dow">{WEEKDAYS_SHORT[isoWeekday(z.day) - 1]}</span>
+          <span class="dow">{L.weekdaysShort[isoWeekday(z.day) - 1]}</span>
           <span class="dd">{Number(z.day.slice(8))}</span>
-          <span class="mm">{MONTHS_SHORT[Number(z.day.slice(5, 7)) - 1]}</span>
+          <span class="mm">{L.monthsShort[Number(z.day.slice(5, 7)) - 1]}</span>
         </div>
         <div class="body">
           <span class="what">{hm(z.min)} · {v.service_name}</span>
@@ -74,17 +78,18 @@
           <span class="staff" style:color={c.ink}><i style:background={c.dot}></i>{v.staff_name}</span>
         </div>
         <div class="acts">
-          <button class="b ghost" onclick={() => decide(v, 'cancel')}>Odrzuć</button>
+          <button class="b ghost" onclick={() => decide(v, 'cancel')}>{t.reject}</button>
           <button class="b" onclick={() => decide(v, 'confirm')}>
-            <Icon name="check" size={18} stroke={2.6} /> Przyjmij
+            <Icon name="check" size={18} stroke={2.6} />
+            {t.accept}
           </button>
         </div>
       </div>
     {:else}
-      {#if loaded}<p class="muted empty">Nic nie czeka.</p>{/if}
+      {#if loaded}<p class="muted empty">{t.empty}</p>{/if}
     {/each}
   </div>
-  {#if items.length}<p class="note">Klient dostanie SMS od razu.</p>{/if}
+  {#if items.length}<p class="note">{t.note}</p>{/if}
 </main>
 
 <style>

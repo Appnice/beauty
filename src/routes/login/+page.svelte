@@ -3,10 +3,15 @@
   import { goto } from '$app/navigation';
   import { page } from '$app/state';
   import { api } from '$lib/api';
+  import { i18n } from '$lib/i18n';
   import CodeInput from '$lib/ui/CodeInput.svelte';
   import Icon from '$lib/ui/Icon.svelte';
+  import LangSwitch from '$lib/ui/LangSwitch.svelte';
   import Logo from '$lib/ui/Logo.svelte';
   import PhoneInput from '$lib/ui/PhoneInput.svelte';
+
+  const L = $derived(i18n(page.data.lang));
+  const t = $derived(L.t.login);
 
   type Step = 'phone' | 'salon' | 'how' | 'code' | 'password';
   let step = $state<Step>('phone');
@@ -23,7 +28,7 @@
   async function findSalons(e: SubmitEvent) {
     e.preventDefault();
     error = '';
-    if (phone.replace(/\D/g, '').length !== 9) return void (error = 'Podaj numer telefonu: 9 cyfr.');
+    if (phone.replace(/\D/g, '').length !== 9) return void (error = t.errors.phone);
     busy = true;
     const r = await api<{ salons: { slug: string; name: string }[] }>(
       'GET',
@@ -32,7 +37,7 @@
     busy = false;
     if (!r.ok) return void (error = r.error);
     salons = r.data.salons;
-    if (salons.length === 0) return void (error = 'Nie znamy tego numeru.');
+    if (salons.length === 0) return void (error = t.errors.unknown);
     const hit = salons.find((s) => s.slug === wanted);
     if (hit || salons.length === 1) {
       slug = (hit ?? salons[0]).slug;
@@ -75,7 +80,7 @@
 </script>
 
 <svelte:head>
-  <title>Zaloguj się</title>
+  <title>{t.title}</title>
   <meta name="robots" content="noindex" />
 </svelte:head>
 
@@ -84,22 +89,23 @@
     {#if step === 'phone'}
       <a class="brand" href="/"><Logo /> beauty</a>
     {:else}
-      <button class="icon-btn back" aria-label="Wstecz" onclick={back}><Icon name="back" /></button>
+      <button class="icon-btn back" aria-label={t.back} onclick={back}><Icon name="back" /></button>
     {/if}
   </div>
 
   {#if step === 'phone'}
     <form class="col" onsubmit={findSalons} novalidate>
-      <h1>Zaloguj się</h1>
-      <div style="margin-top: 36px"><PhoneInput bind:value={phone} label="Telefon" autofocus /></div>
+      <h1>{t.title}</h1>
+      <div style="margin-top: 36px"><PhoneInput bind:value={phone} label={t.phone} autofocus /></div>
       <div class="grow"></div>
       {#if error}<p class="error msg" role="alert">{error}</p>{/if}
-      <button class="btn" disabled={busy}>Dalej</button>
-      <p class="foot">Nie masz salonu? <a href="/zaloz">Załóż salon</a></p>
+      <button class="btn" disabled={busy}>{t.next}</button>
+      <p class="foot">{t.noSalon} <a href="/zaloz">{t.create}</a></p>
+      <div class="lang-row"><LangSwitch /></div>
     </form>
   {:else if step === 'salon'}
     <div class="col">
-      <h1>Który salon?</h1>
+      <h1>{t.whichSalon}</h1>
       <div class="list">
         {#each salons as s (s.slug)}
           <button class="btn secondary" onclick={() => ((slug = s.slug), (step = 'how'))}>{s.name}</button>
@@ -112,22 +118,22 @@
       <p class="lead">{phone}</p>
       <div class="grow"></div>
       {#if error}<p class="error msg" role="alert">{error}</p>{/if}
-      <button class="btn" onclick={sendCode} disabled={busy}>Wyślij kod SMS</button>
+      <button class="btn" onclick={sendCode} disabled={busy}>{t.sendCode}</button>
       <button class="btn secondary" style="margin-top: 12px" onclick={() => (step = 'password')}>
-        Mam hasło
+        {t.havePassword}
       </button>
     </div>
   {:else}
     <form class="col" onsubmit={finish} novalidate>
       {#if step === 'code'}
-        <h1>Wpisz kod z SMS</h1>
-        <p class="lead">Wysłaliśmy go na {phone}</p>
+        <h1>{t.codeTitle}</h1>
+        <p class="lead">{t.sentTo(phone)}</p>
         <div style="margin-top: 36px"><CodeInput bind:value={code} /></div>
       {:else}
-        <h1>Hasło</h1>
+        <h1>{t.password}</h1>
         <p class="lead">{salonName}</p>
         <label class="field" style="margin-top: 36px">
-          Hasło
+          {t.password}
           <!-- svelte-ignore a11y_autofocus -->
           <input
             class="input"
@@ -140,7 +146,7 @@
       {/if}
       <div class="grow"></div>
       {#if error}<p class="error msg" role="alert">{error}</p>{/if}
-      <button class="btn" disabled={busy}>Zaloguj się</button>
+      <button class="btn" disabled={busy}>{t.submit}</button>
     </form>
   {/if}
 </div>
@@ -185,5 +191,9 @@
   }
   .foot a {
     font-weight: 600;
+  }
+  .lang-row {
+    display: flex;
+    justify-content: center;
   }
 </style>

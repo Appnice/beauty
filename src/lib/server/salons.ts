@@ -73,6 +73,8 @@ export interface NewSalonInput {
   status?: SalonStatus;
   about?: AboutSalon;
   signupIp?: string | null;
+  /** Language of the salon's SMS messages (default 'pl'). */
+  lang?: 'pl' | 'en';
   openingHours: HoursItem[];
   manager: {
     name: string;
@@ -111,11 +113,12 @@ export async function createSalon(sql: Sql, input: NewSalonInput): Promise<Salon
     return await inTx(sql, async (t) => {
       const [salon] = await t<Salon[]>`
         insert into salon (slug, name, address, phone, confirmation_mode, is_demo, status, city, street,
-                           team_size, link, about, signup_ip, submitted_at)
+                           team_size, link, about, signup_ip, submitted_at, lang)
         values (${slug}, ${input.name.trim()}, ${input.address ?? ''}, ${input.phone ?? null},
                 ${input.confirmationMode ?? 'auto'}, ${input.isDemo ?? false}, ${input.status ?? 'active'},
                 ${a?.city ?? ''}, ${a?.street ?? ''}, ${a?.teamSize ?? null}, ${a?.link ?? ''}, ${a?.about ?? ''},
-                ${input.signupIp ?? null}, ${a ? new Date().toISOString() : null}::timestamptz)
+                ${input.signupIp ?? null}, ${a ? new Date().toISOString() : null}::timestamptz,
+                ${input.lang ?? 'pl'})
         returning *`;
       await setOpeningHours(t, null, salon.id, input.openingHours);
       const manager = await insertStaff(t, salon.id, {
@@ -246,7 +249,8 @@ export interface WizardInput {
 export async function signup(
   sql: Sql,
   w: WizardInput,
-  ip = 'unknown'
+  ip = 'unknown',
+  lang: 'pl' | 'en' = 'pl'
 ): Promise<{ salon: Salon; managerId: string } | null> {
   if ((w.website ?? '').trim() !== '') return null;
   const st = await signupState(sql);
@@ -284,6 +288,7 @@ export async function signup(
       about: w.about.trim()
     },
     signupIp: ip,
+    lang,
     openingHours: w.openingHours,
     manager: { name: owner.name, phone, password: w.password, color: PERSON_COLORS[0], services: all },
     services,

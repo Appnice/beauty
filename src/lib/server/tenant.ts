@@ -4,6 +4,8 @@ import type { Sql } from 'postgres';
 
 export const RESERVED_SLUGS = new Set([
   'api',
+  'en',
+  'pl',
   'panel',
   'health',
   'static',
@@ -63,6 +65,8 @@ export interface Salon {
   submitted_at: Date | null;
   decided_at: Date | null;
   reject_reason: string;
+  /** Language of this salon's SMS messages. */
+  lang: 'pl' | 'en';
   created_at: Date;
 }
 

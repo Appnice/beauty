@@ -3,6 +3,7 @@
 import { error, fail } from '@sveltejs/kit';
 import { cancelByToken, visitStatusByToken } from '$lib/server/booking.ts';
 import { db } from '$lib/server/db.ts';
+import { trError } from '$lib/i18n/errors.ts';
 import { AppError } from '$lib/server/errors.ts';
 import { salonBySlug } from '$lib/server/tenant.ts';
 
@@ -37,14 +38,14 @@ export async function load({ params, setHeaders }) {
 }
 
 export const actions = {
-  default: async ({ params }) => {
+  default: async ({ params, locals }) => {
     const salon = await salonOf(params.salon);
     try {
       await cancelByToken(db(), salon, params.token);
       return { cancelled: true };
     } catch (e) {
       if (e instanceof AppError && e.code === 'NOT_FOUND') error(404, NOT_FOUND);
-      if (e instanceof AppError) return fail(e.status, { error: e.message });
+      if (e instanceof AppError) return fail(e.status, { error: trError(e.message, locals.lang) });
       throw e;
     }
   }

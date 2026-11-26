@@ -78,11 +78,17 @@ export function fit(build: (...names: string[]) => string, ...names: string[]): 
   return gsm(build(...clean.map(() => '')));
 }
 
-/** "pt. 14.11 o 10:30" without diacritics, in the salon time zone. */
-export function smsWhen(at: Date | string, tz: string): string {
+export type SmsLang = 'pl' | 'en';
+
+/** "pt. 14.11 o 10:30" (English: "Fri 14.11 at 10:30") without diacritics, in the salon time zone. */
+export function smsWhen(at: Date | string, tz: string, lang: SmsLang = 'pl'): string {
   const z = Temporal.Instant.from(typeof at === 'string' ? at : at.toISOString()).toZonedDateTimeISO(tz);
-  const wd = ['pon.', 'wt.', 'sr.', 'czw.', 'pt.', 'sob.', 'niedz.'][z.dayOfWeek - 1];
   const p = (n: number) => String(n).padStart(2, '0');
+  if (lang === 'en') {
+    const wd = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][z.dayOfWeek - 1];
+    return `${wd} ${p(z.day)}.${p(z.month)} at ${p(z.hour)}:${p(z.minute)}`;
+  }
+  const wd = ['pon.', 'wt.', 'sr.', 'czw.', 'pt.', 'sob.', 'niedz.'][z.dayOfWeek - 1];
   return `${wd} ${p(z.day)}.${p(z.month)} o ${p(z.hour)}:${p(z.minute)}`;
 }
 
@@ -117,4 +123,40 @@ export const T = {
   salon_przyjety: (bookLink: string) => gsm(`Salon przyjety. Zapisy online dzialaja: ${bookLink}`),
   salon_odrzucony: (salon: string, reason: string) =>
     fit((s, r) => `Salon ${s} nie zostal przyjety.${r ? ` Powod: ${r}` : ''}`, salon, reason)
-} as const;
+};
+
+/** The same texts in English, for a salon with `lang = 'en'`. Same rules: GSM basic set, 160 characters. */
+export const T_EN: typeof T = {
+  kod: (code: string, salon: string) =>
+    fit((s) => `${code} is your booking code for ${s}. Valid for ${CODE_MINUTES} minutes.`, salon),
+  kod_logowania: (code: string, salon: string) =>
+    fit((s) => `${code} is your login code for the ${s} panel. Valid for ${CODE_MINUTES} minutes.`, salon),
+  kod_zalozenia: (code: string) =>
+    gsm(`${code} is your code to create a salon. Valid for ${CODE_MINUTES} minutes.`),
+  potwierdzenie: (salon: string, service: string, when: string, link: string) =>
+    fit((s, v) => `${s}: visit confirmed, ${when}, ${v}. ${link}`, salon, service),
+  oczekuje: (salon: string, service: string, when: string, link: string) =>
+    fit((s, v) => `${s}: visit ${when}, ${v} is waiting for confirmation. ${link}`, salon, service),
+  odrzucenie: (salon: string, service: string, when: string, bookLink: string) =>
+    fit(
+      (s, v) => `${s}: the salon did not accept the visit ${when}, ${v}. Another time: ${bookLink}`,
+      salon,
+      service
+    ),
+  przypomnienie: (salon: string, service: string, when: string, link: string) =>
+    fit((s, v) => `${s}: tomorrow ${when}, ${v}. To cancel: ${link}`, salon, service),
+  odwolanie: (salon: string, service: string, when: string) =>
+    fit((s, v) => `${s}: visit ${v}, ${when} is cancelled. Call us to book a new time.`, salon, service),
+  menadzerka: (client: string, service: string, when: string, panelLink: string) =>
+    fit((c, v) => `Waiting for you: ${c}, ${v}, ${when}. ${panelLink}`, client, service),
+  admin_nowy_salon: (salon: string, city: string, adminLink: string) =>
+    fit((s, c) => `New salon: ${s}, ${c}. ${adminLink}`, salon, city),
+  salon_przyjety: (bookLink: string) => gsm(`Salon accepted. Online booking is on: ${bookLink}`),
+  salon_odrzucony: (salon: string, reason: string) =>
+    fit((s, r) => `The salon ${s} was not accepted.${r ? ` Reason: ${r}` : ''}`, salon, reason)
+};
+
+/** The SMS texts of a salon's language. */
+export function texts(lang: SmsLang | null | undefined): typeof T {
+  return lang === 'en' ? T_EN : T;
+}

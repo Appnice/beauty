@@ -1,10 +1,15 @@
 <script lang="ts">
   // Platform admin (Admin.dc.html): new salons with every "O salonie" field; "Odrzuć" / "Akceptuj".
   import { onMount } from 'svelte';
+  import { page } from '$app/state';
   import { api } from '$lib/api';
-  import { phoneLocal, whenLabel } from '$lib/pl';
+  import { i18n } from '$lib/i18n';
+  import { phoneLocal } from '$lib/pl';
   import Icon from '$lib/ui/Icon.svelte';
   import { showToast } from '$lib/ui/toast.svelte.ts';
+
+  const L = $derived(i18n(page.data.lang));
+  const t = $derived(L.t.admin);
 
   type Status = 'pending' | 'active' | 'rejected';
   interface S {
@@ -52,7 +57,7 @@
     if (!r.ok) return showToast(r.error, 'error');
     rejecting = null;
     reason = '';
-    showToast(action === 'accept' ? `Przyjęty: ${s.name}` : `Odrzucony: ${s.name}`);
+    showToast(action === 'accept' ? t.toastAccepted(s.name) : t.toastRejected(s.name));
     refresh();
   }
 
@@ -61,20 +66,21 @@
 </script>
 
 <svelte:head>
-  <title>Nowe salony</title>
+  <title>{t.title}</title>
   <meta name="robots" content="noindex" />
 </svelte:head>
 
 <main class="admin">
   <div class="head">
-    <h1>Nowe salony <span class="n">{counts.pending}</span></h1>
+    <h1>{t.title} <span class="n">{counts.pending}</span></h1>
     <div class="grow"></div>
-    <div role="group" aria-label="Filtr" class="seg">
-      <button class:on={status === 'pending'} onclick={() => show('pending')}>Czekają</button>
-      <button class:on={status === 'active'} onclick={() => show('active')}>Przyjęte · {counts.active}</button
+    <div role="group" aria-label={t.filter} class="seg">
+      <button class:on={status === 'pending'} onclick={() => show('pending')}>{t.waiting}</button>
+      <button class:on={status === 'active'} onclick={() => show('active')}
+        >{t.accepted(counts.active)}</button
       >
       <button class:on={status === 'rejected'} onclick={() => show('rejected')}>
-        Odrzucone · {counts.rejected}
+        {t.rejected(counts.rejected)}
       </button>
     </div>
   </div>
@@ -89,32 +95,32 @@
           </div>
           <span class="about">{s.about}</span>
           <div class="meta">
-            <span>{s.team_size} os.</span>
+            <span>{t.people(s.team_size)}</span>
             <span>{phoneLocal(s.phone)}</span>
             {#if s.link}<a href={href(s.link)} target="_blank" rel="noopener noreferrer nofollow">{s.link}</a
               >{/if}
-            <span>{whenLabel(s.submitted_at)}</span>
-            {#if status !== 'pending' && s.reject_reason}<span>Powód: {s.reject_reason}</span>{/if}
+            <span>{L.whenLabel(s.submitted_at)}</span>
+            {#if status !== 'pending' && s.reject_reason}<span>{t.reason(s.reject_reason)}</span>{/if}
           </div>
           {#if rejecting === s.id}
             <div class="why">
               <!-- svelte-ignore a11y_autofocus -->
-              <input class="input" placeholder="Powód (można pominąć)" bind:value={reason} autofocus />
-              <button class="btn small secondary" onclick={() => (rejecting = null)}>Anuluj</button>
-              <button class="btn small" onclick={() => decide(s, 'reject')}>Odrzuć salon</button>
+              <input class="input" placeholder={t.reasonPlaceholder} bind:value={reason} autofocus />
+              <button class="btn small secondary" onclick={() => (rejecting = null)}>{t.cancel}</button>
+              <button class="btn small" onclick={() => decide(s, 'reject')}>{t.rejectSalon}</button>
             </div>
           {/if}
         </div>
         {#if status === 'pending' && rejecting !== s.id}
-          <button class="b2 ghost" onclick={() => ((rejecting = s.id), (reason = ''))}>Odrzuć</button>
+          <button class="b2 ghost" onclick={() => ((rejecting = s.id), (reason = ''))}>{t.reject}</button>
           <button class="b2" onclick={() => decide(s, 'accept')}>
             <Icon name="check" size={18} stroke={2.6} />
-            Akceptuj
+            {t.accept}
           </button>
         {/if}
       </div>
     {:else}
-      {#if loaded}<p class="muted empty">Nic tu nie ma.</p>{/if}
+      {#if loaded}<p class="muted empty">{t.empty}</p>{/if}
     {/each}
   </div>
 </main>

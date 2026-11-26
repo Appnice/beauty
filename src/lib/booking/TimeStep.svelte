@@ -1,8 +1,10 @@
 <script lang="ts">
   // Step 3: a day, then a free time. Only starts the engine offers for this service (length + buffer fit).
   import { onMount } from 'svelte';
+  import { page } from '$app/state';
   import { api } from '$lib/api';
-  import { addDays, hm, isoWeekday, toMin, today, WEEKDAYS_SHORT } from '$lib/pl';
+  import { i18n } from '$lib/i18n';
+  import { addDays, hm, isoWeekday, toMin, today } from '$lib/pl';
   import StepHeader from '$lib/ui/StepHeader.svelte';
   import { b, type PublicPerson, type PublicService } from './state.svelte';
 
@@ -19,6 +21,7 @@
     next: () => void;
     back: () => void;
   } = $props();
+  const L = $derived(i18n(page.data.lang));
 
   const DAYS = 14;
   interface Slot {
@@ -64,9 +67,9 @@
 
 <main class="wiz">
   <StepHeader step={3} total={5} onback={back} />
-  <h1 style="margin: 40px 0 8px">Kiedy?</h1>
-  <p class="lead">{service.name} · {person?.name ?? 'Obojętnie'}</p>
-  {#if b.taken}<p class="error taken" role="alert">Ten termin jest już zajęty</p>{/if}
+  <h1 style="margin: 40px 0 8px">{L.t.booking.time.title}</h1>
+  <p class="lead">{service.name} · {person?.name ?? L.t.booking.person.any}</p>
+  {#if b.taken}<p class="error taken" role="alert">{L.t.booking.time.taken}</p>{/if}
 
   <div class="days" data-testid="days">
     {#each days as d (d)}
@@ -79,7 +82,7 @@
         aria-pressed={d === day}
         onclick={() => (day = d)}
       >
-        <span class="wd">{WEEKDAYS_SHORT[isoWeekday(d) - 1]}</span>
+        <span class="wd">{L.weekdaysShort[isoWeekday(d) - 1]}</span>
         <span class="dd">{Number(d.slice(8))}.{d.slice(5, 7)}</span>
       </button>
     {/each}
@@ -90,15 +93,17 @@
   {:else if slots === null}
     <p class="lead" style="margin-top: 20px">…</p>
   {:else if slots.length === 0}
-    <p class="lead" style="margin-top: 20px">Brak wolnych terminów.</p>
-    <button type="button" class="btn secondary" style="margin-top: 16px" onclick={later}>Kolejne dni</button>
+    <p class="lead" style="margin-top: 20px">{L.t.booking.time.none}</p>
+    <button type="button" class="btn secondary" style="margin-top: 16px" onclick={later}
+      >{L.t.booking.time.later}</button
+    >
   {:else}
     <div class="times" data-testid="times">
       {#each byDay[day] ?? [] as s (s.start)}
         <button type="button" class="time" onclick={() => pick(s)}>{hm(toMin(s.time))}</button>
       {/each}
     </div>
-    <button type="button" class="more" onclick={later}>Kolejne dni</button>
+    <button type="button" class="more" onclick={later}>{L.t.booking.time.later}</button>
   {/if}
 </main>
 

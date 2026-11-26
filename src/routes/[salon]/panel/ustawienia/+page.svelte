@@ -1,14 +1,18 @@
 <script lang="ts">
   // Ustawienia (Ustawienia.dc.html): four tiles, the confirmation mode and the SMS counter of this month.
   import { goto } from '$app/navigation';
+  import { page } from '$app/state';
   import { onMount } from 'svelte';
   import { api } from '$lib/api';
-  import { hoursSummary, instant, MONTHS_GEN, MONTHS_NOM, plural, today } from '$lib/pl';
+  import { i18n } from '$lib/i18n';
+  import { instant, today } from '$lib/pl';
   import type { Calendar } from '$lib/panel/types';
   import Icon from '$lib/ui/Icon.svelte';
+  import LangSwitch from '$lib/ui/LangSwitch.svelte';
   import { showToast } from '$lib/ui/toast.svelte.ts';
 
   let { data } = $props();
+  const L = $derived(i18n(page.data.lang));
   const slug = $derived(data.salon.slug);
   let cal = $state<Calendar | null>(null);
   // svelte-ignore state_referenced_locally
@@ -54,12 +58,22 @@
     {
       href: 'uslugi',
       icon: 'scissors',
-      title: 'Usługi',
-      sub: cal ? `${n} ${plural(n, 'usługa', 'usługi', 'usług')}` : ''
+      title: L.t.settings.main.services,
+      sub: cal ? L.t.settings.main.servicesCount(n) : ''
     },
-    { href: 'zespol', icon: 'team', title: 'Zespół', sub: cal?.staff.map((s) => s.name).join(', ') ?? '' },
-    { href: 'godziny', icon: 'hours', title: 'Godziny otwarcia', sub: cal ? hoursSummary(cal.hours) : '' },
-    { href: 'link', icon: 'link', title: 'Link do zapisów', sub: `${data.publicHost}/${slug}` }
+    {
+      href: 'zespol',
+      icon: 'team',
+      title: L.t.settings.main.team,
+      sub: cal?.staff.map((s) => s.name).join(', ') ?? ''
+    },
+    {
+      href: 'godziny',
+      icon: 'hours',
+      title: L.t.settings.main.hours,
+      sub: cal ? L.hoursSummary(cal.hours) : ''
+    },
+    { href: 'link', icon: 'link', title: L.t.settings.main.link, sub: `${data.publicHost}/${slug}` }
   ]);
   const pct = $derived(sms ? Math.min(100, Math.round((sms.count / sms.limit) * 100)) : 0);
   // The package is used up: SMS stop until the 1st of the next month (codes refuse, reminders wait).
@@ -84,15 +98,15 @@
 
   <div class="two">
     <div class="box" style="gap: 14px">
-      <span class="bt">Nowe rezerwacje</span>
-      <div role="radiogroup" aria-label="Nowe rezerwacje" class="radios">
+      <span class="bt">{L.t.settings.main.newBookings}</span>
+      <div role="radiogroup" aria-label={L.t.settings.main.newBookings} class="radios">
         <button
           role="radio"
           aria-checked={mode === 'auto'}
           class:on={mode === 'auto'}
           onclick={() => setMode('auto')}
         >
-          <span class="dot"></span>Wpadają od razu
+          <span class="dot"></span>{L.t.settings.main.modeAuto}
         </button>
         <button
           role="radio"
@@ -100,12 +114,12 @@
           class:on={mode === 'manual'}
           onclick={() => setMode('manual')}
         >
-          <span class="dot"></span>Czekają na mnie
+          <span class="dot"></span>{L.t.settings.main.modeManual}
         </button>
       </div>
       {#if mode === 'manual'}
         <label class="remind">
-          SMS do mnie po
+          {L.t.settings.main.remindAfter}
           <select bind:value={hours} onchange={setHours}>
             {#each [1, 2, 4, 8, 24] as h (h)}<option value={h}>{h} h</option>{/each}
           </select>
@@ -114,18 +128,21 @@
     </div>
 
     <div class="box" class:full data-testid="sms">
-      <span class="bt">SMS w {MONTHS_NOM[month - 1]}</span>
-      <span class="big">{sms?.count ?? 0} <span class="of">z {sms?.limit ?? 300}</span></span>
+      <span class="bt">{L.t.settings.main.smsIn(L.monthsIn[month - 1])}</span>
+      <span class="big"
+        >{sms?.count ?? 0} <span class="of">{L.t.settings.main.smsOf(sms?.limit ?? 300)}</span></span
+      >
       <div class="track"><div class="fill" style:width="{pct}%"></div></div>
       {#if full}
-        <span class="ts limit" role="status">Limit wyczerpany. SMS-y wrócą 1 {MONTHS_GEN[month % 12]}.</span>
+        <span class="ts limit" role="status">{L.t.settings.main.smsLimit(L.monthsOfDay[month % 12])}</span>
       {:else}
-        <span class="ts">Przypomnienia o wizytach i kody.</span>
+        <span class="ts">{L.t.settings.main.smsNote}</span>
       {/if}
     </div>
   </div>
 
-  <button class="out" onclick={logout}><Icon name="logout" size={18} /> Wyloguj się</button>
+  <button class="out" onclick={logout}><Icon name="logout" size={18} /> {L.t.settings.main.logout}</button>
+  <LangSwitch />
 </main>
 
 <style>

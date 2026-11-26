@@ -4,7 +4,8 @@
   import { page } from '$app/state';
   import { api } from '$lib/api';
   import { personColor } from '$lib/colors';
-  import { addDays, isoWeekday, MONTHS_GEN, today, WEEKDAYS_SHORT, zoned } from '$lib/pl';
+  import { i18n } from '$lib/i18n';
+  import { addDays, isoWeekday, today, zoned } from '$lib/pl';
   import DayBar from '$lib/panel/DayBar.svelte';
   import VisitSheet from '$lib/panel/VisitSheet.svelte';
   import { HOUR_PX, blocksOf, dayRange, minOn, visitsOf } from '$lib/panel/layout';
@@ -14,6 +15,7 @@
 
   let { data } = $props();
   const slug = $derived(data.salon.slug);
+  const L = $derived(i18n(page.data.lang));
   const picked = $derived(page.url.searchParams.get('d') ?? today());
   const monday = $derived(addDays(picked, 1 - isoWeekday(picked)));
   const days = $derived(Array.from({ length: 7 }, (_, i) => addDays(monday, i)));
@@ -40,9 +42,7 @@
   const title = $derived.by(() => {
     const [, m1, d1] = monday.split('-').map(Number);
     const [, m2, d2] = days[6].split('-').map(Number);
-    return m1 === m2
-      ? `${d1} – ${d2} ${MONTHS_GEN[m2 - 1]}`
-      : `${d1} ${MONTHS_GEN[m1 - 1]} – ${d2} ${MONTHS_GEN[m2 - 1]}`;
+    return L.t.panel.week.title(d1, L.monthsOfDay[m1 - 1], d2, L.monthsOfDay[m2 - 1]);
   });
   const isThisWeek = $derived(days.includes(zoned(new Date()).day));
   const go = (d: string) => goto(`/${slug}/panel/tydzien?d=${d}`, { noScroll: true });
@@ -55,8 +55,8 @@
     view="week"
     prev={() => go(addDays(monday, -7))}
     next={() => go(addDays(monday, 7))}
-    prevLabel="Poprzedni tydzień"
-    nextLabel="Następny tydzień"
+    prevLabel={L.t.panel.bar.prevWeek}
+    nextLabel={L.t.panel.bar.nextWeek}
     dayHref="/{slug}/panel?d={picked}"
     weekHref="/{slug}/panel/tydzien?d={picked}"
   />
@@ -66,7 +66,7 @@
         <div class="heads">
           {#each days as d (d)}
             <a class="dh" class:today={d === zoned(new Date()).day} href="/{slug}/panel?d={d}">
-              <span>{WEEKDAYS_SHORT[isoWeekday(d) - 1]}</span>
+              <span>{L.weekdaysShort[isoWeekday(d) - 1]}</span>
               <b>{Number(d.slice(8))}</b>
             </a>
           {/each}
@@ -87,7 +87,7 @@
                   {@const z = Math.min(minOn(b.end, d), range.end * 60)}
                   <div
                     class="it block"
-                    title={b.reason}
+                    title={L.t.panel.block.kind(b.reason)}
                     style:left="{i * w}%"
                     style:width="{w}%"
                     style:top="{y(a)}px"
@@ -100,7 +100,7 @@
                   <button
                     class="it"
                     class:pending={v.status === 'oczekuje'}
-                    title="{v.clientName} · {v.serviceName}"
+                    title="{L.t.panel.client(v.clientName)} · {v.serviceName}"
                     style:left="{i * w}%"
                     style:width="{w}%"
                     style:top="{y(a)}px"
@@ -110,7 +110,7 @@
                     style:border={v.status === 'oczekuje' ? `1.5px dashed ${c.dot}` : '0'}
                     onclick={() => (open = v)}
                   >
-                    {v.clientName}
+                    {L.t.panel.client(v.clientName)}
                   </button>
                 {/each}
               {/each}

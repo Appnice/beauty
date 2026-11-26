@@ -1,6 +1,8 @@
 <script lang="ts">
   // One day row (Godziny.dc.html): day name, the hours (tap to change), the on/off switch.
-  import { hoursLabel, WEEKDAYS } from '$lib/pl';
+  import { hoursLabel } from '$lib/pl';
+  import { page } from '$app/state';
+  import { i18n } from '$lib/i18n';
   import Toggle from './Toggle.svelte';
 
   let {
@@ -16,6 +18,7 @@
     closes: string;
     onchange?: () => void;
   } = $props();
+  const L = $derived(i18n(page.data.lang));
   let edit = $state(false);
   const TIMES: string[] = [];
   for (let m = 6 * 60; m <= 23 * 60; m += 30)
@@ -24,24 +27,24 @@
 </script>
 
 <div class="day">
-  <span class="dname" class:off={!open}>{WEEKDAYS[weekday - 1]}</span>
+  <span class="dname" class:off={!open}>{L.weekdays[weekday - 1]}</span>
   {#if open && edit}
     <span class="edit">
-      <select aria-label="Od" bind:value={opens} onchange={() => onchange?.()}>
+      <select aria-label={L.t.common.from} bind:value={opens} onchange={() => onchange?.()}>
         {#each TIMES.filter((t) => t < closes) as t (t)}<option value={t}>{short(t)}</option>{/each}
       </select>
-      <select aria-label="Do" bind:value={closes} onchange={() => onchange?.()}>
+      <select aria-label={L.t.common.to} bind:value={closes} onchange={() => onchange?.()}>
         {#each TIMES.filter((t) => t > opens) as t (t)}<option value={t}>{short(t)}</option>{/each}
       </select>
     </span>
   {:else if open}
     <button type="button" class="hours" onclick={() => (edit = true)}>{hoursLabel(opens, closes)}</button>
   {:else}
-    <span class="closed">Zamknięte</span>
+    <span class="closed">{L.t.common.closed}</span>
   {/if}
   <Toggle
     bind:on={open}
-    label={WEEKDAYS[weekday - 1]}
+    label={L.weekdays[weekday - 1]}
     onchange={() => {
       edit = false;
       onchange?.();

@@ -36,7 +36,7 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       ADMIN_PHONE: ${ADMIN_PHONE:-}
       ADMIN_NOTIFY_URL: ${ADMIN_NOTIFY_URL:-}
-      OPERATOR_NAME: ${OPERATOR_NAME:-operator tego serwera}
+      OPERATOR_NAME: ${OPERATOR_NAME:-}
       JOBS: 'on'
     healthcheck:
       test:

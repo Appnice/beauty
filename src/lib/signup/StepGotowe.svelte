@@ -1,30 +1,34 @@
 <script lang="ts">
   // The waiting screen (Gotowe.dc.html): the calendar works now, online booking after the approval.
+  import { page } from '$app/state';
+  import { i18n } from '$lib/i18n';
   import Icon from '$lib/ui/Icon.svelte';
   import { w } from './state.svelte';
   let { open }: { open: () => void } = $props();
+  const L = $derived(i18n(page.data.lang));
+  const t = $derived(L.t.signup.done);
 </script>
 
 <main class="wiz done">
   <span class="ring"><Icon name="clock" size={34} stroke={2.2} color="#8A3A5A" /></span>
-  <h1>Sprawdzamy salon</h1>
-  <p class="lead center">Dostaniesz SMS, zwykle tego samego dnia.</p>
+  <h1>{t.title}</h1>
+  <p class="lead center">{t.lead}</p>
 
   <div class="card">
     <div class="line border">
       <Icon name="check" size={22} stroke={2.4} color="#2E7D4F" />
-      <span class="what">Kalendarz</span>
-      <span class="ok">działa</span>
+      <span class="what">{t.calendar}</span>
+      <span class="ok">{t.works}</span>
     </div>
     <div class="line">
       <Icon name="clock" size={22} color="#6E655F" />
-      <span class="what">Zapisy online</span>
-      <span class="wait">po akceptacji</span>
+      <span class="what">{t.online}</span>
+      <span class="wait">{t.after}</span>
     </div>
   </div>
 
   <div class="grow"></div>
-  <button class="btn" onclick={open} disabled={!w.done}>Otwórz kalendarz</button>
+  <button class="btn" onclick={open} disabled={!w.done}>{t.open}</button>
 </main>
 
 <style>

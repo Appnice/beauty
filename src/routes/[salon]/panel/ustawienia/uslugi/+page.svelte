@@ -1,12 +1,15 @@
 <script lang="ts">
   // Usługi: name, minutes, remove; add one at the bottom.
   import { onMount } from 'svelte';
+  import { page } from '$app/state';
   import { api } from '$lib/api';
+  import { i18n } from '$lib/i18n';
   import SubHeader from '$lib/panel/SubHeader.svelte';
   import Icon from '$lib/ui/Icon.svelte';
   import { showToast } from '$lib/ui/toast.svelte.ts';
 
   let { data } = $props();
+  const L = $derived(i18n(page.data.lang));
   const slug = $derived(data.salon.slug);
   interface S {
     id: string;
@@ -24,10 +27,10 @@
   }
   onMount(load);
 
-  async function patch(s: S, body: Record<string, unknown>, msg = 'Zapisano') {
+  async function patch(s: S, body: Record<string, unknown>, msg?: string) {
     const r = await api('PATCH', `/api/${slug}/services/${s.id}`, body);
     if (!r.ok) return showToast(r.error, 'error');
-    showToast(msg);
+    showToast(msg ?? L.t.settings.services.saved);
     load();
   }
   async function add(e: SubmitEvent) {
@@ -45,19 +48,19 @@
 </script>
 
 <main class="page">
-  <SubHeader {slug} title="Usługi" />
+  <SubHeader {slug} title={L.t.settings.services.title} />
   <div class="rows">
     {#each list as s (s.id)}
       <div class="rowbox" data-testid="service-row">
         <input
           class="plain"
-          aria-label="Nazwa usługi"
+          aria-label={L.t.settings.services.nameLabel}
           value={s.name}
           onchange={(e) => patch(s, { name: e.currentTarget.value })}
         />
         <select
           class="plain"
-          aria-label="Czas"
+          aria-label={L.t.settings.services.duration}
           value={s.duration_min}
           onchange={(e) => patch(s, { durationMin: Number(e.currentTarget.value) })}
         >
@@ -67,16 +70,21 @@
         </select>
         <button
           class="icon-btn"
-          aria-label="Usuń: {s.name}"
-          onclick={() => patch(s, { active: false }, 'Usunięto')}
+          aria-label={L.t.settings.services.remove(s.name)}
+          onclick={() => patch(s, { active: false }, L.t.settings.services.removed)}
         >
           <Icon name="close" size={20} color="#9A918A" />
         </button>
       </div>
     {/each}
     <form class="rowbox new" onsubmit={add}>
-      <input class="plain" aria-label="Nowa usługa" placeholder="Nowa usługa" bind:value={name} />
-      <button class="soft-btn">Dodaj</button>
+      <input
+        class="plain"
+        aria-label={L.t.settings.services.newService}
+        placeholder={L.t.settings.services.newService}
+        bind:value={name}
+      />
+      <button class="soft-btn">{L.t.settings.services.add}</button>
     </form>
   </div>
 </main>

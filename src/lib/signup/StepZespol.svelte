@@ -1,14 +1,19 @@
 <script lang="ts">
   // Step 5 (Zespol.dc.html): names of the people; each one is a calendar column. The first one is the owner.
+  import { page } from '$app/state';
   import { personColor } from '$lib/colors';
+  import { i18n } from '$lib/i18n';
   import Avatar from '$lib/ui/Avatar.svelte';
   import Icon from '$lib/ui/Icon.svelte';
   import StepHeader from '$lib/ui/StepHeader.svelte';
   import { ownerGuess, w } from './state.svelte';
 
   let { next, back }: { next: () => void; back: () => void } = $props();
+  const L = $derived(i18n(page.data.lang));
+  const t = $derived(L.t.signup);
   let name = $state('');
-  if (w.team.length === 0) w.team.push({ name: ownerGuess(w.name) });
+  // the guessed name is saved as the owner's calendar column, so it follows the page language
+  if (w.team.length === 0) w.team.push({ name: ownerGuess(w.name, i18n(page.data.lang).t.signup.team.me) });
 
   function add() {
     const v = name.trim();
@@ -19,15 +24,15 @@
   function submit(e: SubmitEvent) {
     e.preventDefault();
     if (name.trim()) return add();
-    if (w.team.length === 0) w.team.push({ name: ownerGuess(w.name) });
+    if (w.team.length === 0) w.team.push({ name: ownerGuess(w.name, t.team.me) });
     next();
   }
 </script>
 
 <form class="wiz" onsubmit={submit} novalidate>
   <StepHeader step={5} onback={back} />
-  <h1 style="margin: 32px 0 6px">Kto pracuje?</h1>
-  <p class="lead">Każda osoba to kolumna w kalendarzu.</p>
+  <h1 style="margin: 32px 0 6px">{t.team.title}</h1>
+  <p class="lead">{t.team.lead}</p>
 
   <div class="list">
     {#each w.team as p, i (i)}
@@ -35,21 +40,21 @@
       <div class="row">
         <Avatar name={p.name} bg={c.bg} ink={c.avatarInk} size={40} />
         <span class="name">{p.name}</span>
-        <span class="note">{i === 0 ? 'Ty' : ''}</span>
-        <button type="button" class="icon-btn" aria-label="Usuń" onclick={() => w.team.splice(i, 1)}>
+        <span class="note">{i === 0 ? t.team.you : ''}</span>
+        <button type="button" class="icon-btn" aria-label={t.team.remove} onclick={() => w.team.splice(i, 1)}>
           <Icon name="close" size={20} color="#9A918A" />
         </button>
       </div>
     {/each}
     <div class="row new">
-      <input aria-label="Imię" placeholder="Imię" bind:value={name} autocomplete="off" />
-      <button type="button" class="add-btn" onclick={add}>Dodaj</button>
+      <input aria-label={t.team.name} placeholder={t.team.name} bind:value={name} autocomplete="off" />
+      <button type="button" class="add-btn" onclick={add}>{t.add}</button>
     </div>
   </div>
 
   <div class="grow"></div>
-  <button class="btn">Dalej</button>
-  <p class="foot">Pracujesz sama? Też dobrze.</p>
+  <button class="btn">{t.next}</button>
+  <p class="foot">{t.team.alone}</p>
 </form>
 
 <style>

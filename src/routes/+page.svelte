@@ -1,48 +1,66 @@
 <script lang="ts">
+  import { page } from '$app/state';
+  import { i18n } from '$lib/i18n';
+  import LangSwitch from '$lib/ui/LangSwitch.svelte';
   import Logo from '$lib/ui/Logo.svelte';
+
+  const L = $derived(i18n(page.data.lang));
+  const t = $derived(L.t.landing);
+  // the two screens in the mock-up: Polish, or their English twins (docs/screens/en, tests/e2e/english.spec.ts)
+  const shot = $derived(L.lang === 'en' ? '-en' : '');
 </script>
 
 <svelte:head>
-  <title>beauty · zapisy do salonu</title>
-  <meta name="description" content="Darmowy kalendarz dla salonu i zapisy online." />
+  <title>{t.title}</title>
+  <meta name="description" content={t.description} />
 </svelte:head>
 
 <main class="land">
   <header class="top">
     <div class="brand"><Logo /> beauty</div>
-    <a class="login-top" href="/login">Zaloguj się</a>
+    <div class="top-right">
+      <LangSwitch />
+      <a class="login-top" href="/login">{t.login}</a>
+    </div>
   </header>
 
   <section class="hero">
     <div class="copy">
-      <h1>Zapisy do salonu bez papieru</h1>
-      <p class="muted lead">Kalendarz dla recepcji i zapisy online.</p>
-      <p class="free">Za darmo. Otwarty kod.</p>
-      <img class="mobile-shot" src="/landing/panel.png" alt="" width="1024" height="768" aria-hidden="true" />
+      <h1>{t.h1}</h1>
+      <p class="muted lead">{t.lead}</p>
+      <p class="free">{t.free}</p>
+      <img
+        class="mobile-shot"
+        src="/landing/panel{shot}.png"
+        alt=""
+        width="1024"
+        height="768"
+        aria-hidden="true"
+      />
       <div class="grow"></div>
       <div class="actions">
-        <a class="btn" href="/zaloz">Załóż salon</a>
-        <a class="btn secondary" href="/demo">Zobacz salon demo</a>
+        <a class="btn" href="/zaloz">{t.create}</a>
+        <a class="btn secondary" href="/demo">{t.demo}</a>
       </div>
-      <p class="foot">Masz już salon? <a href="/login">Zaloguj się</a></p>
+      <p class="foot">{t.haveSalon} <a href="/login">{t.login}</a></p>
     </div>
 
     <div class="shots" aria-hidden="true">
-      <img class="panel" src="/landing/panel.png" alt="" width="1024" height="768" />
-      <img class="phone" src="/landing/telefon.png" alt="" width="390" height="844" />
+      <img class="panel" src="/landing/panel{shot}.png" alt="" width="1024" height="768" />
+      <img class="phone" src="/landing/telefon{shot}.png" alt="" width="390" height="844" />
     </div>
   </section>
 
   <ul class="facts">
-    <li><strong>Kalendarz</strong><span>kolumna na każdą osobę</span></li>
-    <li><strong>Zapisy online</strong><span>klient sam wybiera termin</span></li>
-    <li><strong>Na telefonie</strong><span>każdy widzi swój dzień</span></li>
-    <li><strong>0 zł prowizji</strong><span>od żadnej wizyty</span></li>
+    <li><strong>{t.facts.calendar}</strong><span>{t.facts.calendarNote}</span></li>
+    <li><strong>{t.facts.online}</strong><span>{t.facts.onlineNote}</span></li>
+    <li><strong>{t.facts.phone}</strong><span>{t.facts.phoneNote}</span></li>
+    <li><strong>{t.facts.fee}</strong><span>{t.facts.feeNote}</span></li>
   </ul>
 
-  <a class="v2b" href="https://vote2build.com/p/1">
+  <a class="v2b" href={L.v2b}>
     <span class="stamp" aria-hidden="true">V2B</span>
-    <span>Wybrane głosami. Zbudowane za darmo.</span>
+    <span>{t.v2b}</span>
     <span class="src">vote2build #001</span>
   </a>
 </main>
@@ -68,6 +86,11 @@
     gap: 8px;
     font-weight: 700;
     font-size: 17px;
+  }
+  .top-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
   }
   .login-top {
     display: none;

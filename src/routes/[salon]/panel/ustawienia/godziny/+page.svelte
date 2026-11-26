@@ -1,7 +1,9 @@
 <script lang="ts">
   // Godziny otwarcia of the salon, and the weekly hours of one person.
   import { onMount } from 'svelte';
+  import { page } from '$app/state';
   import { api } from '$lib/api';
+  import { i18n } from '$lib/i18n';
   import { today } from '$lib/pl';
   import SubHeader from '$lib/panel/SubHeader.svelte';
   import type { Calendar } from '$lib/panel/types';
@@ -9,6 +11,7 @@
   import { showToast } from '$lib/ui/toast.svelte.ts';
 
   let { data } = $props();
+  const L = $derived(i18n(page.data.lang));
   const slug = $derived(data.salon.slug);
   type Day = { weekday: number; open: boolean; opens: string; closes: string };
   let cal = $state<Calendar | null>(null);
@@ -47,20 +50,20 @@
           on.map((d) => ({ weekday: d.weekday, opens: d.opens, closes: d.closes }))
         );
     if (!r.ok) return showToast(r.error, 'error');
-    showToast('Zapisano');
+    showToast(L.t.settings.hours.saved);
     load();
   }
 </script>
 
 <main class="page">
-  <SubHeader {slug} title="Godziny otwarcia" />
-  <div class="chips" role="radiogroup" aria-label="Czyje godziny" style="margin-top: 20px">
+  <SubHeader {slug} title={L.t.settings.hours.title} />
+  <div class="chips" role="radiogroup" aria-label={L.t.settings.hours.whose} style="margin-top: 20px">
     <button
       role="radio"
       aria-checked={who === ''}
       class="chip"
       class:on={who === ''}
-      onclick={() => ((who = ''), fill())}>Salon</button
+      onclick={() => ((who = ''), fill())}>{L.t.settings.hours.salon}</button
     >
     {#each cal?.staff ?? [] as s (s.id)}
       <button
@@ -77,7 +80,9 @@
       <HoursRow weekday={d.weekday} bind:open={d.open} bind:opens={d.opens} bind:closes={d.closes} />
     {/each}
   </div>
-  <button class="btn" style="margin-top: 20px; max-width: 420px" onclick={save}>Zapisz</button>
+  <button class="btn" style="margin-top: 20px; max-width: 420px" onclick={save}
+    >{L.t.settings.hours.save}</button
+  >
 </main>
 
 <style>

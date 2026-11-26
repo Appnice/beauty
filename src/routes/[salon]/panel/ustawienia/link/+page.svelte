@@ -1,11 +1,14 @@
 <script lang="ts">
   // Link do zapisów: the address, copy, QR code to print.
   import { renderSVG } from 'uqr';
+  import { page } from '$app/state';
+  import { i18n } from '$lib/i18n';
   import SubHeader from '$lib/panel/SubHeader.svelte';
   import Icon from '$lib/ui/Icon.svelte';
   import { showToast } from '$lib/ui/toast.svelte.ts';
 
   let { data } = $props();
+  const L = $derived(i18n(page.data.lang));
   const url = $derived(
     `https://${data.publicHost}/${data.salon.slug}`.replace(/^https:\/\/(localhost|127\.)/, 'http://$1')
   );
@@ -15,21 +18,21 @@
   async function copy() {
     try {
       await navigator.clipboard.writeText(url);
-      showToast('Skopiowane');
+      showToast(L.t.settings.link.copied);
     } catch {
-      showToast('Nie udało się skopiować.', 'error');
+      showToast(L.t.settings.link.copyFailed, 'error');
     }
   }
 </script>
 
 <main class="page">
-  <SubHeader slug={data.salon.slug} title="Link do zapisów" />
+  <SubHeader slug={data.salon.slug} title={L.t.settings.link.title} />
   <div class="card">
     <a class="url" href={url} target="_blank" rel="noopener" data-testid="booking-link">{shown}</a>
     <!-- eslint-disable-next-line svelte/no-at-html-tags -->
-    <div class="qr" aria-label="Kod QR">{@html svg}</div>
-    <button class="btn" onclick={copy}><Icon name="copy" size={20} /> Kopiuj link</button>
-    {#if data.salon.status === 'pending'}<p class="muted">Zapisy online ruszą po akceptacji</p>{/if}
+    <div class="qr" aria-label={L.t.settings.link.qr}>{@html svg}</div>
+    <button class="btn" onclick={copy}><Icon name="copy" size={20} /> {L.t.settings.link.copy}</button>
+    {#if data.salon.status === 'pending'}<p class="muted">{L.t.settings.link.pending}</p>{/if}
   </div>
 </main>
 

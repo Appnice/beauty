@@ -1,9 +1,11 @@
 <script lang="ts">
   // New visit side sheet (NowaWizyta.dc.html): person + day + time prefilled, phone with a returning-client
   // suggestion, name, service chips, "Zapisz · 13:00–14:00".
+  import { page } from '$app/state';
   import { api } from '$lib/api';
   import { personColor } from '$lib/colors';
-  import { groupDigits, hm, initial, instant, isFemaleName, phoneLocal, plural, shortDate } from '$lib/pl';
+  import { i18n } from '$lib/i18n';
+  import { groupDigits, hm, initial, instant, phoneLocal } from '$lib/pl';
   import Avatar from '$lib/ui/Avatar.svelte';
   import Sheet from '$lib/ui/Sheet.svelte';
   import type { Calendar } from './types';
@@ -28,6 +30,8 @@
     onsaved: (msg: string) => void;
   } = $props();
 
+  const L = $derived(i18n(page.data.lang));
+  const t = $derived(L.t.panel.newVisit);
   // svelte-ignore state_referenced_locally
   let who = $state(staffId);
   // svelte-ignore state_referenced_locally
@@ -78,8 +82,8 @@
   async function save(e: SubmitEvent) {
     e.preventDefault();
     error = '';
-    if (!clientId && name.trim().length < 2) return void (error = 'Podaj imię.');
-    if (!serviceId) return void (error = 'Wybierz usługę.');
+    if (!clientId && name.trim().length < 2) return void (error = t.needName);
+    if (!serviceId) return void (error = t.needService);
     busy = true;
     const r = await api('POST', `/api/${slug}/visits`, {
       serviceId,
@@ -91,16 +95,14 @@
     });
     busy = false;
     if (!r.ok) return void (error = r.error);
-    onsaved(`Zapisano: ${hm(at)}`);
+    onsaved(t.saved(hm(at)));
   }
-
-  const visits = (n: number) => `${n} ${plural(n, 'raz', 'razy', 'razy')}`;
 </script>
 
-<Sheet title="Nowa wizyta" {onclose}>
+<Sheet title={t.title} {onclose}>
   <form class="form" onsubmit={save} novalidate>
     {#if pick}
-      <div class="chips" role="radiogroup" aria-label="Kto">
+      <div class="chips" role="radiogroup" aria-label={t.who}>
         {#each cal.staff as s, i (s.id)}
           {@const c = personColor(s.color, i)}
           <button
@@ -116,7 +118,7 @@
         {/each}
       </div>
       <label class="field" style="margin-top: 14px">
-        Godzina
+        {t.time}
         <select class="input" bind:value={at}>
           {#each TIMES as t (t)}<option value={t}>{hm(t)}</option>{/each}
         </select>
@@ -125,12 +127,12 @@
       <div class="who" style:background={color.bg} style:color={color.ink} data-testid="sheet-who">
         <Avatar name={person.name} bg="#FFFFFF" ink={color.ink} size={28} />
         <span class="wname">{person.name}</span>
-        <span class="wwhen">· {shortDate(day)} · {hm(at)}</span>
+        <span class="wwhen">· {L.shortDate(day)} · {hm(at)}</span>
       </div>
     {/if}
 
     <label class="field" style="margin-top: 22px">
-      Telefon
+      {t.phone}
       <input class="input phone" value={phone} oninput={typed} inputmode="tel" autocomplete="off" />
     </label>
     {#if hint}
@@ -138,20 +140,17 @@
         <span class="hav">{initial(hint.name)}</span>
         <span class="htext">
           <span class="hname">{hint.name}</span>
-          <span class="hsub"
-            >{phoneLocal(hint.phone)} · {isFemaleName(hint.name) ? 'była' : 'był'}
-            {visits(hint.visit_count)}</span
-          >
+          <span class="hsub">{phoneLocal(hint.phone)} · {t.been(hint.name, hint.visit_count)}</span>
         </span>
       </button>
     {/if}
 
     <label class="field" style="margin-top: 18px">
-      Imię
+      {t.name}
       <input class="input" bind:value={name} oninput={() => (clientId = null)} autocomplete="off" />
     </label>
 
-    <p class="label">Usługa</p>
+    <p class="label">{t.service}</p>
     <div class="chips">
       {#each services as s (s.id)}
         <button
@@ -159,14 +158,14 @@
           class="chip"
           class:on={serviceId === s.id}
           aria-pressed={serviceId === s.id}
-          onclick={() => (serviceId = s.id)}>{s.name} · {s.durationMin} min</button
+          onclick={() => (serviceId = s.id)}>{s.name} · {t.minutes(s.durationMin)}</button
         >
       {/each}
     </div>
 
     <div class="grow"></div>
     {#if error}<p class="error" role="alert" style="margin-bottom: 12px">{error}</p>{/if}
-    <button class="btn" disabled={busy}>Zapisz · {hm(at)}–{hm(at + dur)}</button>
+    <button class="btn" disabled={busy}>{t.save} · {hm(at)}–{hm(at + dur)}</button>
   </form>
 </Sheet>
 

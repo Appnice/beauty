@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { page } from '$app/state';
+  import { i18n } from '$lib/i18n';
   import Rail from '$lib/panel/Rail.svelte';
   import { panel, POLL_MS, refreshPending } from '$lib/panel/panel.svelte.ts';
   import Icon from '$lib/ui/Icon.svelte';
@@ -41,7 +42,8 @@
     <div class="area">
       {#if data.salon.status === 'pending'}
         <p class="wait" data-testid="pending-line">
-          <Icon name="clock" size={14} /> Zapisy online ruszą po akceptacji
+          <Icon name="clock" size={14} />
+          {i18n(page.data.lang).t.panel.pendingLine}
         </p>
       {/if}
       {@render children()}

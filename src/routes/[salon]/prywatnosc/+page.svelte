@@ -1,51 +1,42 @@
 <script lang="ts">
   // Privacy (RODO) for the clients of one salon. Plain words, short.
+  import { page } from '$app/state';
+  import { i18n } from '$lib/i18n';
   import { phoneLocal } from '$lib/pl';
   let { data } = $props();
+  const L = $derived(i18n(page.data.lang));
+  const t = $derived(L.t.booking.privacy);
   const s = $derived(data.salon);
   const where = $derived([s.street, s.city].filter(Boolean).join(', '));
 </script>
 
 <svelte:head>
-  <title>Prywatność · {s.name}</title>
+  <title>{t.pageTitle(s.name)}</title>
   {#if !data.online}<meta name="robots" content="noindex" />{/if}
 </svelte:head>
 
 <main class="wiz doc">
   <a class="bar" href="/{s.slug}">{s.name}</a>
-  <h1 style="margin: 32px 0 20px">Prywatność</h1>
+  <h1 style="margin: 32px 0 20px">{t.title}</h1>
 
-  <h2>Kto ma Twoje dane</h2>
-  <p>
-    Administratorem danych jest salon {s.name}{where ? `, ${where}` : ''}{s.phone
-      ? `, tel. ${phoneLocal(s.phone)}`
-      : ''}. Salon przetwarza dane na swoje potrzeby: wizyty i przypomnienia.
-  </p>
-  <p>
-    System zapisów utrzymuje {data.operator}. Przetwarza dane tylko na zlecenie salonu (umowa powierzenia,
-    art. 28 RODO) i nie używa ich do niczego innego.
-  </p>
+  <h2>{t.whoTitle}</h2>
+  <p>{t.controller(s.name, where, s.phone ? phoneLocal(s.phone) : '')}</p>
+  <p>{t.processor(data.operator)}</p>
 
-  <h2>Jakie dane</h2>
-  <p>Imię, numer telefonu, wizyty (usługa, osoba, termin) i SMS-y o tych wizytach.</p>
+  <h2>{t.whatTitle}</h2>
+  <p>{t.what}</p>
 
-  <h2>Po co</h2>
-  <p>
-    Żeby zapisać Cię na wizytę, potwierdzić numer kodem SMS, przypomnieć o wizycie i dać link do odwołania
-    (art. 6 ust. 1 lit. b RODO).
-  </p>
+  <h2>{t.whyTitle}</h2>
+  <p>{t.why}</p>
 
-  <h2>Jak długo</h2>
-  <p>Dopóki jesteś klientem salonu albo do Twojej prośby o usunięcie.</p>
+  <h2>{t.howLongTitle}</h2>
+  <p>{t.howLong}</p>
 
-  <h2>Twoje prawa</h2>
-  <p>
-    Możesz poprosić salon o wgląd, poprawienie albo usunięcie danych. Po usunięciu salon zachowuje tylko
-    termin i usługę, bez Twojego imienia i numeru. Możesz złożyć skargę do Prezesa UODO.
-  </p>
+  <h2>{t.rightsTitle}</h2>
+  <p>{t.rights}</p>
 
-  <h2>Pliki cookie</h2>
-  <p>Strona zapisów nie używa cookie do śledzenia ani reklam.</p>
+  <h2>{t.cookiesTitle}</h2>
+  <p>{t.cookies}</p>
 </main>
 
 <style>

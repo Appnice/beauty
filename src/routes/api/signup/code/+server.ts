@@ -14,7 +14,7 @@ export async function POST(event: RequestEvent) {
       throw new AppError('FORBIDDEN', 'Zakładanie nowych salonów jest zamknięte.');
     const b = await body(event, z.object({ phone: z.string().max(30) }));
     await checkSignupPhone(sql, b.phone, clientIp(event));
-    const r = await issueSignupCode(sql, b.phone, clientIp(event));
+    const r = await issueSignupCode(sql, b.phone, clientIp(event), event.locals.lang);
     return json({ sent: true, phone: r.phone, code: r.echo });
   } catch (e) {
     return errorResponse(e);

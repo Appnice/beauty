@@ -1,7 +1,10 @@
 <script lang="ts">
+  import { page } from '$app/state';
+  import { i18n } from '$lib/i18n';
   // 6 boxes for the SMS code (Kod.dc.html). Typing moves on; a pasted code fills all boxes.
   let { value = $bindable(''), oncomplete }: { value?: string; oncomplete?: (code: string) => void } =
     $props();
+  const L = $derived(i18n(page.data.lang));
   let boxes: HTMLInputElement[] = $state([]);
   const digits = $derived(Array.from({ length: 6 }, (_, i) => value[i] ?? ''));
 
@@ -31,7 +34,7 @@
   {#each digits as d, i (i)}
     <input
       bind:this={boxes[i]}
-      aria-label="Cyfra {i + 1}"
+      aria-label={L.t.common.digit(i + 1)}
       value={d}
       inputmode="numeric"
       autocomplete={i === 0 ? 'one-time-code' : 'off'}

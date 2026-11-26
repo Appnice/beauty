@@ -4,6 +4,12 @@ declare global {
     interface Error {
       code?: string;
     }
+    interface Locals {
+      lang: 'pl' | 'en';
+    }
+    interface PageData {
+      lang: 'pl' | 'en';
+    }
   }
 }
 

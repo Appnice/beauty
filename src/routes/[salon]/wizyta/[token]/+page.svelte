@@ -2,20 +2,17 @@
   // The visit page (signed link from the SMS). Cancel asks once more: a mistap must not cancel.
   import { enhance } from '$app/forms';
   import { page } from '$app/state';
-  import { phoneLocal, visitWhen } from '$lib/pl';
+  import { i18n } from '$lib/i18n';
+  import { phoneLocal } from '$lib/pl';
   import Icon from '$lib/ui/Icon.svelte';
+  import LangSwitch from '$lib/ui/LangSwitch.svelte';
 
   let { data, form } = $props();
+  const L = $derived(i18n(page.data.lang));
   const v = $derived(data.visit);
   const ask = $derived(page.url.searchParams.get('odwolaj') === '1' && v.canCancel);
   const active = $derived(v.status === 'oczekuje' || v.status === 'potwierdzona');
-  const LABEL: Record<string, string> = {
-    potwierdzona: 'Wizyta potwierdzona',
-    oczekuje: 'Czeka na potwierdzenie salonu',
-    odwolana: 'Wizyta odwołana',
-    zakonczona: 'Wizyta zakończona',
-    nieobecnosc: 'Nieobecność'
-  };
+  const label = $derived((L.t.booking.status as Record<string, string>)[v.status]);
   const again = $derived(`/${data.salon.slug}?usluga=${v.serviceId}&osoba=${encodeURIComponent(v.staffId)}`);
 </script>
 
@@ -30,12 +27,12 @@
     class="pill"
     class:ok={v.status === 'potwierdzona'}
     class:wait={v.status === 'oczekuje'}
-    data-testid="status">{LABEL[v.status]}</span
+    data-testid="status">{label}</span
   >
   <h1 style="margin: 16px 0 0">{v.service}</h1>
 
   <div class="sum" style="margin-top: 24px">
-    <div class="line"><Icon name="calendar" size={20} color="#6E655F" />{visitWhen(v.start)}</div>
+    <div class="line"><Icon name="calendar" size={20} color="#6E655F" />{L.visitWhen(v.start)}</div>
     <div class="line"><Icon name="team" size={20} color="#6E655F" />{v.staff}</div>
     {#if data.salon.street || data.salon.city}
       <div class="line">
@@ -55,24 +52,26 @@
   {#if form?.error}<p class="error msg" role="alert">{form.error}</p>{/if}
 
   {#if ask}
-    <h2 class="q">Odwołać wizytę?</h2>
+    <h2 class="q">{L.t.booking.visit.askCancel}</h2>
     <form method="POST" use:enhance>
-      <button class="btn danger">Tak, odwołaj</button>
+      <button class="btn danger">{L.t.booking.visit.yesCancel}</button>
     </form>
-    <a class="btn secondary" style="margin-top: 10px" href="?">Nie</a>
+    <a class="btn secondary" style="margin-top: 10px" href="?">{L.t.booking.visit.no}</a>
   {:else}
     {#if active}
-      <a class="btn" href="/api/{data.salon.slug}/booking/{data.token}/ics" download="wizyta.ics">
-        <Icon name="calendar" size={20} color="#FFFFFF" /> Dodaj do kalendarza
+      <a class="btn" href="/api/{data.salon.slug}/booking/{data.token}/ics" download={L.t.booking.icsFile}>
+        <Icon name="calendar" size={20} color="#FFFFFF" />
+        {L.t.booking.addToCalendar}
       </a>
     {/if}
-    <a class="btn secondary" style="margin-top: 10px" href={again}>Zarezerwuj ponownie</a>
+    <a class="btn secondary" style="margin-top: 10px" href={again}>{L.t.booking.visit.again}</a>
     {#if v.canCancel}
-      <a class="cancel" href="?odwolaj=1">Odwołaj wizytę</a>
+      <a class="cancel" href="?odwolaj=1">{L.t.booking.visit.cancel}</a>
     {:else if active}
-      <p class="late">Na odwołanie jest już za późno. Zadzwoń do salonu.</p>
+      <p class="late">{L.t.booking.visit.tooLate}</p>
     {/if}
   {/if}
+  <div class="langs"><LangSwitch /></div>
 </main>
 
 <style>
@@ -127,6 +126,11 @@
     font-size: 16px;
     font-weight: 600;
     text-decoration: none;
+  }
+  .langs {
+    margin-top: 8px;
+    display: flex;
+    justify-content: center;
   }
   .late {
     margin-top: 16px;

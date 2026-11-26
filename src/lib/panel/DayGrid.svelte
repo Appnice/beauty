@@ -1,8 +1,10 @@
 <script lang="ts">
   // The day calendar (Kalendarz.dc.html): one column per person in the person's colour, 64 px per hour.
   // Tap a free time: "+ Dodaj wizytę". Drag a visit to another time or person (pointer events).
+  import { page } from '$app/state';
   import { personColor } from '$lib/colors';
-  import { hm, plural, WEEKDAYS_GEN, isoWeekday, zoned } from '$lib/pl';
+  import { i18n } from '$lib/i18n';
+  import { hm, isoWeekday, zoned } from '$lib/pl';
   import Avatar from '$lib/ui/Avatar.svelte';
   import { blocksOf, dayRange, HOUR_PX, isFree, minOn, timeRange, visitsOf } from './layout';
   import type { Calendar, PVisit } from './types';
@@ -28,6 +30,7 @@
     onmove: (v: PVisit, staffId: string, min: number) => void;
   } = $props();
 
+  const L = $derived(i18n(page.data.lang));
   const range = $derived(dayRange(cal, day));
   const colH = $derived((range.end - range.start) * HOUR_PX);
   const y = (min: number) => ((min - range.start * 60) / 60) * HOUR_PX;
@@ -66,14 +69,13 @@
         minOn(b.start, day) <= range.start * 60 &&
         minOn(b.end, day) >= range.end * 60
     );
-    if (off) return 'urlop';
-    const n = visitsOf(cal, staffId, day).length;
-    return `${n} ${plural(n, 'wizyta', 'wizyty', 'wizyt')}`;
+    if (off) return L.t.panel.day.onLeave;
+    return L.t.panel.day.visits(visitsOf(cal, staffId, day).length);
   }
 
   function blockSub(end: string): string {
     const last = zoned(new Date(Date.parse(end) - 1)).day;
-    return last > day ? `do ${WEEKDAYS_GEN[isoWeekday(last) - 1]}` : '';
+    return last > day ? L.t.panel.day.until(L.weekdaysUntil[isoWeekday(last) - 1]) : '';
   }
 
   // ---------- drag and drop ----------
@@ -157,7 +159,7 @@
               data-testid="block"
             >
               <span class="t">{timeRange(a, z)}</span>
-              <span class="title">{b.reason || 'Blokada'}</span>
+              <span class="title">{L.t.panel.block.kind(b.reason) || L.t.panel.block.fallback}</span>
               <span class="sub">{blockSub(b.end)}</span>
             </div>
           {/each}
@@ -186,8 +188,8 @@
               onclick={(e) => e.stopPropagation()}
             >
               <span class="t">{timeRange(a, z)}</span>
-              <span class="title">{v.clientName}</span>
-              <span class="sub">{v.status === 'oczekuje' ? 'Czeka na Ciebie' : v.serviceName}</span>
+              <span class="title">{L.t.panel.client(v.clientName)}</span>
+              <span class="sub">{v.status === 'oczekuje' ? L.t.panel.day.waitingForYou : v.serviceName}</span>
             </button>
           {/each}
           {#if free && free.staffId === s.id}
@@ -203,7 +205,7 @@
               }}
             >
               <span class="t"></span>
-              <span class="title">+ Dodaj wizytę</span>
+              <span class="title">{L.t.panel.day.addVisit}</span>
               <span class="sub">{hm(free.min)}</span>
             </button>
           {/if}

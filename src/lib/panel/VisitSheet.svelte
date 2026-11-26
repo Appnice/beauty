@@ -1,13 +1,18 @@
 <script lang="ts">
   // The visit card: who, when, what; accept a waiting visit, cancel, "nie przyszła", "zakończona", a note.
+  import { page } from '$app/state';
   import { api } from '$lib/api';
   import { personColor } from '$lib/colors';
-  import { hm, isFemaleName, phoneLocal, shortDate, zoned } from '$lib/pl';
+  import { i18n } from '$lib/i18n';
+  import { hm, phoneLocal, zoned } from '$lib/pl';
   import Avatar from '$lib/ui/Avatar.svelte';
   import Sheet from '$lib/ui/Sheet.svelte';
   import type { Calendar, PVisit } from './types';
 
+  /** The name the server sends for an erased client (`ERASED_NAME`): data, not a text. */
   const ERASED = 'Usunięty klient';
+  const L = $derived(i18n(page.data.lang));
+  const t = $derived(L.t.panel.visit);
 
   let {
     slug,
@@ -33,7 +38,6 @@
   const a = $derived(zoned(visit.start));
   const z = $derived(zoned(visit.end));
   const started = $derived(Date.parse(visit.start) <= Date.now());
-  const she = $derived(isFemaleName(visit.clientName));
 
   async function act(action: string, msg: string) {
     error = '';
@@ -51,7 +55,7 @@
     const r = await api('DELETE', `/api/${slug}/clients/${visit.clientId}`);
     busy = false;
     if (!r.ok) return void (error = r.error);
-    ondone('Dane klienta usunięte');
+    ondone(t.toast.erased);
   }
 
   async function saveNote() {
@@ -59,15 +63,15 @@
     const r = await api('PATCH', `/api/${slug}/visits/${visit.id}`, { action: 'note', note });
     busy = false;
     if (!r.ok) return void (error = r.error);
-    ondone('Notatka zapisana');
+    ondone(t.toast.noteSaved);
   }
 </script>
 
-<Sheet title={visit.clientName} {onclose}>
+<Sheet title={L.t.panel.client(visit.clientName)} {onclose}>
   <div class="who" style:background={c.bg} style:color={c.ink}>
     <Avatar name={person?.name ?? '?'} bg="#FFFFFF" ink={c.ink} size={28} />
     <span class="wname">{person?.name}</span>
-    <span>· {shortDate(a.day)} · {hm(a.min)}–{hm(z.min)}</span>
+    <span>· {L.shortDate(a.day)} · {hm(a.min)}–{hm(z.min)}</span>
   </div>
   <p class="svc">{visit.serviceName}</p>
   {#if visit.clientPhone}
@@ -75,12 +79,12 @@
   {/if}
 
   <label class="field" style="margin-top: 22px">
-    Notatka
+    {t.note}
     <textarea class="input" bind:value={note}></textarea>
   </label>
   {#if note !== visit.note}
     <button class="btn secondary" style="margin-top: 8px" onclick={saveNote} disabled={busy}
-      >Zapisz notatkę</button
+      >{t.saveNote}</button
     >
   {/if}
 
@@ -88,33 +92,32 @@
   {#if error}<p class="error" role="alert" style="margin-bottom: 12px">{error}</p>{/if}
   <div class="acts">
     {#if visit.status === 'oczekuje'}
-      <button class="btn" onclick={() => act('confirm', 'Przyjęta')} disabled={busy}>Przyjmij</button>
-      <button class="btn secondary" onclick={() => act('cancel', 'Odrzucona')} disabled={busy}>Odrzuć</button>
+      <button class="btn" onclick={() => act('confirm', t.toast.accepted)} disabled={busy}>{t.accept}</button>
+      <button class="btn secondary" onclick={() => act('cancel', t.toast.rejected)} disabled={busy}
+        >{t.reject}</button
+      >
     {:else if visit.status === 'potwierdzona'}
       {#if started}
-        <button class="btn" onclick={() => act('finish', 'Zakończona')} disabled={busy}>Zakończona</button>
-        <button class="btn secondary" onclick={() => act('no_show', 'Nieobecność')} disabled={busy}>
-          {she ? 'Nie przyszła' : 'Nie przyszedł'}
+        <button class="btn" onclick={() => act('finish', t.toast.finished)} disabled={busy}>{t.finish}</button
+        >
+        <button class="btn secondary" onclick={() => act('no_show', t.toast.noShow)} disabled={busy}>
+          {t.noShow(visit.clientName)}
         </button>
       {/if}
-      <button class="btn secondary" onclick={() => act('cancel', 'Odwołana')} disabled={busy}
-        >Odwołaj wizytę</button
+      <button class="btn secondary" onclick={() => act('cancel', t.toast.cancelled)} disabled={busy}
+        >{t.cancel}</button
       >
     {:else}
       <p class="muted state">
-        {visit.status === 'zakonczona'
-          ? 'Zakończona'
-          : visit.status === 'nieobecnosc'
-            ? 'Nieobecność'
-            : 'Odwołana'}
+        {L.t.panel.status[visit.status]}
       </p>
     {/if}
     {#if visit.clientName !== ERASED}
       {#if erase}
-        <button class="btn danger" onclick={eraseClient} disabled={busy}>Tak, usuń dane</button>
-        <button class="btn secondary" onclick={() => (erase = false)} disabled={busy}>Nie</button>
+        <button class="btn danger" onclick={eraseClient} disabled={busy}>{t.eraseYes}</button>
+        <button class="btn secondary" onclick={() => (erase = false)} disabled={busy}>{t.eraseNo}</button>
       {:else}
-        <button class="erase" onclick={() => (erase = true)} disabled={busy}>Usuń dane klienta</button>
+        <button class="erase" onclick={() => (erase = true)} disabled={busy}>{t.erase}</button>
       {/if}
     {/if}
   </div>

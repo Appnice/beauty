@@ -8,7 +8,7 @@ import { publicUrl, quiet } from './env.ts';
 import { sendOnce, sendSms, type NotificationRow } from './notify.ts';
 import { getBoss, QUEUES, type VisitJob } from './queue.ts';
 import { pruneDemo } from './seed.ts';
-import { T, smsWhen } from './sms/templates.ts';
+import { smsWhen, texts } from './sms/templates.ts';
 import { clientSmsAllowed, salonById, type Salon } from './tenant.ts';
 import { purgeRejected } from './approval.ts';
 import { systemClock, toInstant, type Clock } from './time.ts';
@@ -40,21 +40,21 @@ export async function handleConfirmation(sql: Sql, job: VisitJob): Promise<Notif
   const to = x?.v.client_phone;
   if (!x || !to) return null;
   const { salon, v } = x;
-  const when = smsWhen(v.starts_at, salon.timezone);
+  const when = smsWhen(v.starts_at, salon.timezone, salon.lang);
   const link = statusLink(salon, v.id);
   const base = { salonId: salon.id, visitId: v.id, to };
   if (v.status === 'potwierdzona') {
     return sendSms(sql, {
       ...base,
       type: 'potwierdzenie',
-      body: T.potwierdzenie(salon.name, v.service_name, when, link)
+      body: texts(salon.lang).potwierdzenie(salon.name, v.service_name, when, link)
     });
   }
   if (v.status === 'oczekuje') {
     return sendSms(sql, {
       ...base,
       type: 'oczekuje',
-      body: T.oczekuje(salon.name, v.service_name, when, link)
+      body: texts(salon.lang).oczekuje(salon.name, v.service_name, when, link)
     });
   }
   return null;
@@ -71,10 +71,10 @@ export async function handleReminder(sql: Sql, job: VisitJob): Promise<Notificat
     visitId: v.id,
     type: 'przypomnienie',
     to,
-    body: T.przypomnienie(
+    body: texts(salon.lang).przypomnienie(
       salon.name,
       v.service_name,
-      smsWhen(v.starts_at, salon.timezone),
+      smsWhen(v.starts_at, salon.timezone, salon.lang),
       statusLink(salon, v.id)
     )
   });
@@ -86,7 +86,7 @@ export async function handleCancellation(sql: Sql, job: VisitJob): Promise<Notif
   const to = x?.v.client_phone;
   if (!x || !to || x.v.status !== 'odwolana' || x.v.cancelled_by !== 'salon') return null;
   const { salon, v } = x;
-  const when = smsWhen(v.starts_at, salon.timezone);
+  const when = smsWhen(v.starts_at, salon.timezone, salon.lang);
   const declined = v.source === 'online' && v.confirmed_at === null;
   return sendSms(sql, {
     salonId: salon.id,
@@ -94,8 +94,8 @@ export async function handleCancellation(sql: Sql, job: VisitJob): Promise<Notif
     type: declined ? 'odrzucenie' : 'odwolanie',
     to,
     body: declined
-      ? T.odrzucenie(salon.name, v.service_name, when, bookingLink(salon))
-      : T.odwolanie(salon.name, v.service_name, when)
+      ? texts(salon.lang).odrzucenie(salon.name, v.service_name, when, bookingLink(salon))
+      : texts(salon.lang).odwolanie(salon.name, v.service_name, when)
   });
 }
 
@@ -114,10 +114,10 @@ export async function handleManagerReminder(sql: Sql, job: VisitJob): Promise<No
       staffId: m.id,
       type: 'menadzerka',
       to: m.phone,
-      body: T.menadzerka(
+      body: texts(salon.lang).menadzerka(
         v.client_name,
         v.service_name,
-        smsWhen(v.starts_at, salon.timezone),
+        smsWhen(v.starts_at, salon.timezone, salon.lang),
         `${publicUrl()}/${salon.slug}/panel/czekaja`
       )
     });
